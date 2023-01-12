@@ -1,0 +1,21 @@
+CREATE TABLE taskEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    done INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    created INTEGER NOT NULL
+);
+
+addTask:
+REPLACE INTO taskEntity VALUES (?,?,?,?);
+
+updateTask:
+REPLACE INTO taskEntity VALUES (?,?,?,?);
+
+deleteTask:
+DELETE FROM taskEntity WHERE id = ?;
+
+getTask:
+SELECT * FROM taskEntity WHERE id = ?;
+
+getAllTasks:
+SELECT * FROM taskEntity;
