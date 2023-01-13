@@ -1,8 +1,9 @@
-package com.android.todozen.utils
+package com.android.todozen.features.core
 
 import com.android.todozen.databinding.ItemTaskBinding
-import com.android.todozen.domain.ListItem
+import com.android.todozen.utils.DateTimeUtil.formatDateTime
 import com.android.todozen.domain.Task
+import com.android.todozen.utils.ListItem
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
 fun tasksAdapterDelegate(
@@ -15,8 +16,8 @@ fun tasksAdapterDelegate(
     itemView.setOnClickListener { clickListener.invoke(item) }
     binding.btnDone.setOnClickListener { checkListener.invoke(item) }
     binding.btnDelete.setOnClickListener { deleteListener.invoke(item) }
-    bind {
-        binding.tvTitle.text = "${item.id} ${item.title}"
+    bind { payloads ->
+        binding.tvTitle.text = "${item.id} ${item.title} ${formatDateTime(item.date, item.time)}"
         binding.btnDone.isChecked = item.done
     }
 }

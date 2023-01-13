@@ -1,6 +1,7 @@
-package com.android.todozen.utils
+package com.android.todozen.features.core
 
 import android.app.Activity
+import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,3 +19,10 @@ fun RecyclerView.initVertical(adapter: BaseAdapterDelegate) {
 private fun RecyclerView.clearDecorations() {
     for (i in 0 until itemDecorationCount) { removeItemDecorationAt(i) }
 }
+
+var EditText.str: String
+    set(value) {
+        setText(value)
+        setSelection(value.length)
+    }
+    get() = text.toString()

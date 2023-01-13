@@ -3,6 +3,7 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven { setUrl("https://maven.fabric.io/public") }
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
@@ -15,6 +16,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { setUrl("https://jitpack.io") }
     }
 }
 

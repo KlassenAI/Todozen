@@ -1,8 +1,8 @@
-package com.android.todozen.utils
+package com.android.todozen.features.core
 
 import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
-import com.android.todozen.domain.ListItem
+import com.android.todozen.utils.ListItem
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 

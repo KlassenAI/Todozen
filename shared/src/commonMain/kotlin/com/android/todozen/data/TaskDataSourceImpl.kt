@@ -2,9 +2,10 @@ package com.android.todozen.data
 
 import com.android.todozen.TaskDatabase
 import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.android.todozen.domain.DateTimeUtil
+import com.android.todozen.utils.DateTimeUtil
 import com.android.todozen.domain.Task
-import com.android.todozen.domain.TaskDataSource
+import com.android.todozen.utils.map
+import com.android.todozen.utils.toLong
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,7 +19,9 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             id = task.id,
             title = task.title,
             done = task.done,
-            created = DateTimeUtil.toEpochMillis(task.created)
+            date = task.date?.toLong(),
+            time = task.time?.toLong(),
+            created = task.created.toLong()
         )
     }
 
@@ -27,7 +30,9 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             id = task.id,
             title = task.title,
             done = task.done,
-            created = DateTimeUtil.toEpochMillis(task.created)
+            date = task.date?.toLong(),
+            time = task.time?.toLong(),
+            created = task.created.toLong()
         )
     }
 

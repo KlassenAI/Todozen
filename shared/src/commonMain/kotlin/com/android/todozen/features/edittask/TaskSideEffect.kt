@@ -1,4 +1,4 @@
-package com.android.todozen.features.fastedit
+package com.android.todozen.features.edittask
 
 sealed class TaskSideEffect {
     object TaskAdded: TaskSideEffect()

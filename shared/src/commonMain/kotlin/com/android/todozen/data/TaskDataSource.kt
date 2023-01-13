@@ -1,5 +1,6 @@
-package com.android.todozen.domain
+package com.android.todozen.data
 
+import com.android.todozen.domain.Task
 import kotlinx.coroutines.flow.Flow
 
 interface TaskDataSource {
