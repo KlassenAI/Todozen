@@ -8,5 +8,6 @@ data class EditTaskState(
     val id: Long? = null,
     val title: String = "",
     val date: LocalDate? = null,
-    val time: LocalTime? = null
+    val time: LocalTime? = null,
+    val taskList: Long? = null
 ): BaseState

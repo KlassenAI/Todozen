@@ -36,8 +36,7 @@ class TaskListViewModel(
     }
 
     fun checkTask(task: Task) {
-        task.done = task.done.not()
-        viewModelScope.launch { taskDS.updateTask(task) }
+        viewModelScope.launch { taskDS.editTask(task.apply { done = done.not() }) }
     }
 
     fun deleteTask(task: Task) {

@@ -17,6 +17,7 @@ class EditTaskViewModel(
     fun updateDateTime(date: LocalDate?, time: LocalTime?) {
         updateState { copy(date = date, time = time) }
     }
+    fun updateTaskList(taskList: Long?) = updateState { copy(taskList = taskList) }
 
     fun loadTask(taskId: Long?) {
         viewModelScope.launch {
@@ -28,13 +29,6 @@ class EditTaskViewModel(
     fun editTask() {
         val state = _state.value
         val task = Task(id = state.id, title = state.title, date = state.date, time = state.time)
-        viewModelScope.launch {
-            if (task.id == null) {
-                taskDS.addTask(task)
-            } else {
-                taskDS.updateTask(task)
-            }
-        }
+        viewModelScope.launch { taskDS.editTask(task) }
     }
-
 }

@@ -2,7 +2,6 @@ package com.android.todozen.data
 
 import com.android.todozen.TaskDatabase
 import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.android.todozen.utils.DateTimeUtil
 import com.android.todozen.domain.Task
 import com.android.todozen.utils.map
 import com.android.todozen.utils.toLong
@@ -14,25 +13,15 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
 
     private val queries = db.taskQueries
 
-    override suspend fun addTask(task: Task) {
-        queries.addTask(
+    override suspend fun editTask(task: Task) {
+        queries.editTask(
             id = task.id,
             title = task.title,
             done = task.done,
             date = task.date?.toLong(),
             time = task.time?.toLong(),
-            created = task.created.toLong()
-        )
-    }
-
-    override suspend fun updateTask(task: Task) {
-        queries.updateTask(
-            id = task.id,
-            title = task.title,
-            done = task.done,
-            date = task.date?.toLong(),
-            time = task.time?.toLong(),
-            created = task.created.toLong()
+            created = task.created.toLong(),
+            taskList = task.taskList
         )
     }
 

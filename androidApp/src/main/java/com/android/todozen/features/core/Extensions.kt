@@ -3,6 +3,8 @@ package com.android.todozen.features.core
 import android.app.Activity
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -26,3 +28,7 @@ var EditText.str: String
         setSelection(value.length)
     }
     get() = text.toString()
+
+fun Fragment.showDialog(dialog: DialogFragment) {
+    dialog.show(childFragmentManager, dialog::class.simpleName)
+}

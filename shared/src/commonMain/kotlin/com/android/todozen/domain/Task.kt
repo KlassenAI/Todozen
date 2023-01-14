@@ -13,6 +13,7 @@ data class Task(
     var date: LocalDate? = null,
     var time: LocalTime? = null,
     val created: LocalDateTime = DateTimeUtil.now(),
+    val taskList: Long? = null,
 ) : ListItem {
     override fun getUuid() = id
 }

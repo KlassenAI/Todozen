@@ -4,14 +4,13 @@ CREATE TABLE TaskEntity(
     done INTEGER AS Boolean DEFAULT 0 NOT NULL,
     date INTEGER,
     time INTEGER,
-    created INTEGER NOT NULL
+    created INTEGER NOT NULL,
+    taskList INTEGER,
+    FOREIGN KEY (taskList) REFERENCES TaskListEntity(id)
 );
 
-addTask:
-INSERT OR REPLACE INTO TaskEntity VALUES (?,?,?,?,?,?);
-
-updateTask:
-REPLACE INTO TaskEntity VALUES (?,?,?,?,?,?);
+editTask:
+INSERT OR REPLACE INTO TaskEntity VALUES (?,?,?,?,?,?,?);
 
 deleteTask:
 DELETE FROM TaskEntity WHERE id = ?;
