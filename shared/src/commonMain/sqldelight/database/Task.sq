@@ -5,21 +5,42 @@ CREATE TABLE TaskEntity(
     date INTEGER,
     time INTEGER,
     created INTEGER NOT NULL,
-    taskList INTEGER,
-    FOREIGN KEY (taskList) REFERENCES TaskListEntity(id)
+    listId INTEGER,
+    FOREIGN KEY (listId) REFERENCES TaskListEntity(id)
 );
 
 editTask:
-INSERT OR REPLACE INTO TaskEntity VALUES (?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO TaskEntity
+VALUES (?,?,?,?,?,?,?);
 
 deleteTask:
-DELETE FROM TaskEntity WHERE id = ?;
+DELETE FROM TaskEntity
+WHERE id = ?;
 
 getTask:
-SELECT * FROM TaskEntity WHERE id = ?;
+SELECT * FROM TaskEntity
+WHERE id = ?;
+
+getTaskWithListId:
+SELECT * FROM TaskEntity
+INNER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id
+WHERE TaskEntity.id = ?;
+
+getTasks:
+SELECT * FROM TaskEntity
+INNER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id
+WHERE listId = ?;
+
+getIncomingTasks:
+SELECT * FROM TaskEntity
+WHERE listId IS NULL;
 
 getAllTasks:
-SELECT * FROM TaskEntity;
+SELECT * FROM TaskEntity
+INNER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id;
 
 CREATE TABLE TaskListEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -27,13 +48,16 @@ CREATE TABLE TaskListEntity (
 );
 
 editTaskList:
-INSERT OR REPLACE INTO TaskListEntity VALUES (?,?);
+INSERT OR REPLACE INTO TaskListEntity
+VALUES (?,?);
 
 deleteTaskList:
-DELETE FROM TaskListEntity WHERE id = ?;
+DELETE FROM TaskListEntity
+WHERE id = ?;
 
 getTaskList:
-SELECT * FROM TaskListEntity WHERE id = ?;
+SELECT * FROM TaskListEntity
+WHERE id = ?;
 
 getAllTaskLists:
 SELECT * FROM TaskListEntity;

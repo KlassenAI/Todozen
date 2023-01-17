@@ -6,4 +6,4 @@
     android:layout_height="wrap_content"
     android:clipToPadding="false"
     android:padding="4dp"
-    tools:listitem="@layout/item_task_list" />
+    tools:listitem="@layout/item_task_list_2" />

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/taskListFragment"
-        android:name="com.android.todozen.features.tasklist.TaskListFragment"
+        android:name="com.android.todozen.tasklist.TaskListFragment"
         tools:layout="@layout/fragment_task_list">
         <action
             android:id="@+id/taskList_to_menu"
@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.android.todozen.features.menu.MenuFragment"
+        android:name="com.android.todozen.menu.MenuFragment"
         tools:layout="@layout/fragment_menu">
         <action
             android:id="@+id/menu_to_taskList"
