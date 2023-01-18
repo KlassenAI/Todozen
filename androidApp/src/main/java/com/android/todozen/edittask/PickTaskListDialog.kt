@@ -1,7 +1,6 @@
 package com.android.todozen.edittask
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import com.android.todozen.core.taskListsAdapterDelegate
 import com.android.todozen.menu.MenuState
 import com.android.todozen.menu.MenuViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dev.icerock.moko.mvvm.utils.bind
+import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
@@ -36,11 +35,6 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
         dismiss()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.ModalBottomSheetDialog)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,23 +49,27 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        menuViewModel.state.bind(viewLifecycleOwner) { state -> state?.let { render(state) } }
+        menuViewModel.state.bindNotNull(viewLifecycleOwner) {
+            this.state = it
+            adapter?.items = it.taskLists
+        }
     }
 
-    private fun render(state: MenuState) {
-        this.state = state
-        adapter?.items = state.taskLists
-        Log.d("aboba", "render ${state.taskLists}")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.ModalBottomSheetDialog)
     }
 
     companion object {
 
         const val TASK_LIST_ID = "taskListId"
 
-        fun getInstance(taskListId: Long? = null) = PickTaskListDialog().apply {
-            taskListId?.let {
-                arguments = bundleOf(TASK_LIST_ID to longArrayOf(taskListId))
-            }
+        fun getInstance(
+            taskListId: Long? = null
+        ) = PickTaskListDialog().apply {
+            val bundle = bundleOf()
+            taskListId?.let { bundle.putLongArray(TASK_LIST_ID, longArrayOf(taskListId)) }
+            arguments = bundle
         }
     }
 

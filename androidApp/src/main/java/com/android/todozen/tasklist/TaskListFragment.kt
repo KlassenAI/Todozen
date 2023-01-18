@@ -16,7 +16,7 @@ import com.android.todozen.core.initVertical
 import com.android.todozen.core.showDialog
 import com.android.todozen.core.tasksAdapterDelegate
 import com.android.todozen.edittask.EditTaskDialog
-import dev.icerock.moko.mvvm.utils.bind
+import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class TaskListFragment : Fragment(R.layout.fragment_task_list) {
@@ -32,7 +32,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
     )
 
     private fun clickTask(task: Task) {
-        showDialog(EditTaskDialog.getInstance(task.id, task.listId))
+        showDialog(EditTaskDialog.getInstance(task.id))
     }
     private fun checkTask(task: Task) = viewModel.checkTask(task)
     private fun deleteTask(task: Task) = viewModel.deleteTask(task)
@@ -40,22 +40,29 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+        initObservers()
+        initListeners()
+    }
+
+    private fun initViews() {
         binding.rvTasks.initVertical(tasksAdapter)
         binding.rvDoneTasks.initVertical(doneTasksAdapter)
 
         createRecycler(tasksAdapter)
         createRecycler(doneTasksAdapter)
+    }
 
-        binding.fab.setOnClickListener { showDialog(EditTaskDialog.getInstance()) }
-
-        binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
-
-        viewModel.state.bind(this) { state ->
-            state?.let {
-                tasksAdapter.items = state.tasks
-                doneTasksAdapter.items = state.doneTasks
-            }
+    private fun initObservers() {
+        viewModel.state.bindNotNull(this) {
+            tasksAdapter.items = it.tasks
+            doneTasksAdapter.items = it.doneTasks
         }
+    }
+
+    private fun initListeners() {
+        binding.fab.setOnClickListener { showDialog(EditTaskDialog.getInstance()) }
+        binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
     }
 
     @SuppressLint("InflateParams")

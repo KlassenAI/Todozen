@@ -8,12 +8,15 @@ plugins {
 kotlin {
     android()
 
+    val moko = "0.15.0"
+    val sqldelight = "1.5.3"
+
     targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java).all {
         binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework::class.java).all {
-            export("dev.icerock.moko:mvvm-core:0.15.0")
-            export("dev.icerock.moko:mvvm-livedata:0.15.0")
-            export("dev.icerock.moko:mvvm-livedata-resources:0.15.0")
-            export("dev.icerock.moko:mvvm-state:0.15.0")
+            export("dev.icerock.moko:mvvm-core:$moko")
+            export("dev.icerock.moko:mvvm-livedata:$moko")
+            export("dev.icerock.moko:mvvm-livedata-resources:$moko")
+            export("dev.icerock.moko:mvvm-state:$moko")
         }
     }
 
@@ -29,29 +32,32 @@ kotlin {
 
     sourceSets {
 
-        /*
-        implementation(Libraries.Common.sqlDelight)
-                implementation(Libraries.Common.sqlDelightExtension)
-                implementation(Libraries.Common.kotlinxSerializationCore)
-                implementation(Libraries.Common.kotlinxCoroutinesCore)
-         */
         val commonMain by getting {
             dependencies {
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
-                implementation("com.squareup.sqldelight:runtime:1.5.3")
-
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-                implementation("com.squareup.sqldelight:coroutines-extensions:1.5.4")
-
+                val sqlCoroutines = "1.5.4"
+                val datetime = "0.4.0"
+                val coroutines = "1.6.4"
                 val napier = "2.6.1"
+                val koin = "3.2.2"
+
+                // Storage
+                implementation("com.squareup.sqldelight:runtime:$sqldelight")
+                implementation("com.squareup.sqldelight:coroutines-extensions:$sqlCoroutines")
+
+                // Date and Time
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$datetime")
+
+                // Asynchronous
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
+
+                // Log
                 implementation("io.github.aakira:napier:$napier")
 
-                val koin = "3.2.2"
+                // Dependency Injection
                 implementation("io.insert-koin:koin-core:$koin")
 
-                val moko = "0.15.0"
+                // Architecture
                 implementation("dev.icerock.moko:mvvm-core:$moko") // only ViewModel, EventsDispatcher, Dispatchers.UI
                 implementation("dev.icerock.moko:mvvm-flow:$moko") // api mvvm-core, CFlow for native and binding extensions
                 implementation("dev.icerock.moko:mvvm-livedata:$moko") // api mvvm-core, LiveData and extensions
@@ -67,7 +73,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("com.squareup.sqldelight:android-driver:1.5.3")
+                implementation("com.squareup.sqldelight:android-driver:$sqldelight")
             }
         }
         val androidTest by getting
@@ -77,7 +83,7 @@ kotlin {
         val iosMain by creating {
 
             dependencies {
-                implementation("com.squareup.sqldelight:native-driver:1.5.3")
+                implementation("com.squareup.sqldelight:native-driver:$sqldelight")
             }
 
             dependsOn(commonMain)

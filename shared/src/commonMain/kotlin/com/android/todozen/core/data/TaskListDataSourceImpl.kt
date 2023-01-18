@@ -25,11 +25,7 @@ class TaskListDataSourceImpl(db: TaskDatabase) : TaskListDataSource {
         return queries.getTaskList(id).executeAsOne().map()
     }
 
-    override fun getTaskLists(): List<TaskList> {
-        return queries.getAllTaskLists().executeAsList().map { it.map() }
-    }
-
-    override fun getFlowTaskLists(): Flow<List<TaskList>> {
+    override fun getTaskLists(): Flow<List<TaskList>> {
         return queries.getAllTaskLists().asFlow().mapToList().map { it.map { it.map() } }
     }
 }

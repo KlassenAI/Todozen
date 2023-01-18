@@ -15,10 +15,23 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <include
+                android:id="@+id/containerAllTasks"
+                layout="@layout/item_task_list_2" />
+
+            <include
+                android:id="@+id/containerTodayTasks"
+                layout="@layout/item_task_list_2" />
+
+            <include
+                android:id="@+id/containerIncomingTasks"
+                layout="@layout/item_task_list_2" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTaskLists"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:clipToPadding="false"
                 android:padding="4dp"
                 tools:listitem="@layout/item_task_list" />

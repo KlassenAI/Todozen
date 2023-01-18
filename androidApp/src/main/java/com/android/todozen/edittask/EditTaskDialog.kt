@@ -1,24 +1,24 @@
 package com.android.todozen.edittask
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
-import com.android.todozen.databinding.DialogEditTaskBinding
-import com.android.todozen.core.showDialog
 import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
-import com.android.todozen.core.str
+import com.android.todozen.core.showDialog
+import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dev.icerock.moko.mvvm.utils.bind
+import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class EditTaskDialog private constructor(): BottomSheetDialogFragment() {
+class EditTaskDialog private constructor() : BottomSheetDialogFragment() {
 
     private val binding by viewBinding<DialogEditTaskBinding>()
     private val viewModel by sharedViewModel<EditTaskViewModel>()
@@ -27,16 +27,58 @@ class EditTaskDialog private constructor(): BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val taskId = arguments?.getLongArray(TASK_ID)?.firstOrNull()
-        val listId = arguments?.getLongArray(LIST_ID)?.firstOrNull()
-        Log.d("aboba", "$taskId $listId")
-        viewModel.loadTask(taskId, listId)
-
-
-
-        viewModel.state.bind(viewLifecycleOwner) { state -> state?.let { render(state) } }
-
+        initViews()
+        initObservers()
         initListeners()
+    }
+
+    private fun initViews() {
+        val taskId = arguments?.getLongArray(TASK_ID)?.firstOrNull()
+        viewModel.loadTask(taskId)
+        binding.etTitle.requestFocus()
+    }
+
+    private fun initObservers() {
+        viewModel.state.bindNotNull(viewLifecycleOwner) {
+            state = it
+            if (binding.etTitle.text.toString() != it.title) {
+                val wasEmpty = binding.etTitle.text.isEmpty()
+                binding.etTitle.setText(it.title)
+                if (wasEmpty) binding.etTitle.setSelection(it.title.length)
+            }
+            binding.tvTitleDate.text = formatDateTime(it.date, it.time)
+            binding.tvTitleTaskList.text = it.listTitle
+            binding.ivIconMyDay.imageTintList = ContextCompat.getColorStateList(
+                requireContext(), if (it.inMyDay) R.color.black else R.color.gray
+            )
+        }
+    }
+
+    private fun initListeners() {
+        binding.etTitle.addTextChangedListener {
+            viewModel.updateTitle(it.toString())
+        }
+        binding.etTitle.setOnEditorActionListener { _, i, _ ->
+            var handled = false
+            if (i == EditorInfo.IME_ACTION_DONE) {
+                viewModel.editTask()
+                handled = true
+            }
+            handled
+        }
+        binding.btnEdit.setOnClickListener {
+            viewModel.editTask()
+            dismiss()
+        }
+        binding.containerDate.setOnClickListener {
+            showDialog(EditDateDialog.getInstance(state.date, state.time))
+        }
+        binding.containerList.setOnClickListener {
+            showDialog(PickTaskListDialog.getInstance(state.listId))
+        }
+        binding.containerMyDay.setOnClickListener {
+            viewModel.updateInMyDay()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,55 +86,15 @@ class EditTaskDialog private constructor(): BottomSheetDialogFragment() {
         setStyle(STYLE_NORMAL, R.style.ModalBottomSheetDialog)
     }
 
-    private fun render(state: EditTaskState) {
-        this.state = state
-        binding.etTitle.str = state.title
-        binding.tvTitleDate.text = formatDateTime(state.date, state.time)
-        binding.tvTitleTaskList.text = state.listTitle
-    }
-
-    private fun initListeners() {
-        binding.btnEdit.setOnClickListener {
-            updateEdits()
-            viewModel.editTask()
-            dismiss()
-        }
-        binding.containerDate.setOnClickListener {
-            updateEdits()
-            showDialog(EditDateDialog.getInstance(state.date, state.time))
-        }
-        binding.containerList.setOnClickListener {
-            updateEdits()
-            showDialog(PickTaskListDialog.getInstance(state.listId))
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        updateEdits()
-    }
-
-    private fun updateEdits() {
-        viewModel.updateTitle(binding.etTitle.text.toString())
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        viewModel.clearState()
-    }
-
     companion object {
 
         const val TASK_ID = "taskId"
-        const val LIST_ID = "listId"
 
         fun getInstance(
-            taskId: Long? = null,
-            listId: Long? = null
+            taskId: Long? = null
         ) = EditTaskDialog().apply {
             val bundle = bundleOf()
             taskId?.let { bundle.putLongArray(TASK_ID, longArrayOf(taskId)) }
-            listId?.let { bundle.putLongArray(LIST_ID, longArrayOf(listId)) }
             arguments = bundle
         }
     }

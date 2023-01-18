@@ -2,7 +2,6 @@ package com.android.todozen.edittasklist
 
 import com.android.todozen.core.data.TaskListDataSource
 import com.android.todozen.core.presentation.BaseViewModel
-import kotlinx.coroutines.launch
 
 class EditTaskListViewModel(
     private val taskDS: TaskListDataSource
@@ -10,10 +9,13 @@ class EditTaskListViewModel(
 
     override fun initialState() = EditTaskListState()
 
-    fun updateTitle(title: String) = updateState { copy(title = title) }
+    fun updateTitle(title: String) {
+        if (title == state.value.title) return
+        updateState { copy(title = title) }
+    }
 
     fun loadTaskList(taskListId: Long?) {
-        viewModelScope.launch {
+        doJob {
             val taskList = taskListId?.let { taskDS.getTaskList(it) }
             updateState { EditTaskListState.getFromTaskList(taskList) }
         }
@@ -21,6 +23,9 @@ class EditTaskListViewModel(
 
     fun editTaskList() {
         val taskList = _state.value.getTaskList()
-        viewModelScope.launch { taskDS.editTaskList(taskList) }
+        doJob {
+            taskDS.editTaskList(taskList)
+            clearState()
+        }
     }
 }

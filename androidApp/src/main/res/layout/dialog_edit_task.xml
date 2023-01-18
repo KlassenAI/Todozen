@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:inputType="text"
+            android:imeOptions="actionDone"
             tools:ignore="Autofill,LabelFor" />
 
         <ImageButton
@@ -82,6 +84,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 tools:text="Спорт" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/containerMyDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/ivIconMyDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_today_24"
+                tools:ignore="ContentDescription"
+                app:tint="@color/gray" />
 
         </LinearLayout>
 

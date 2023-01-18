@@ -11,10 +11,11 @@ fun TaskEntity.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = null,
-    listTitle = ""
+    listTitle = "",
+    inMyDay = inMyDay
 )
 
-fun GetTaskWithListId.map() = Task(
+fun GetTask.map() = Task(
     id = id,
     title = title,
     done = done,
@@ -22,7 +23,8 @@ fun GetTaskWithListId.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
-    listTitle = title_
+    listTitle = title_.orEmpty(),
+    inMyDay = inMyDay
 )
 
 fun GetTasks.map() = Task(
@@ -33,7 +35,32 @@ fun GetTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
-    listTitle = title_
+    listTitle = title_.orEmpty(),
+    inMyDay = inMyDay
+)
+
+fun GetTasksForToday.map() = Task(
+    id = id,
+    title = title,
+    done = done,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    listId = id_,
+    listTitle = title_.orEmpty(),
+    inMyDay = inMyDay
+)
+
+fun GetAllTasks.map() = Task(
+    id = id,
+    title = title,
+    done = done,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    listId = id_,
+    listTitle = title_.orEmpty(),
+    inMyDay = inMyDay
 )
 
 fun TaskListEntity.map() = TaskList(
@@ -41,9 +68,11 @@ fun TaskListEntity.map() = TaskList(
     title = title,
 )
 
-fun LocalDateTime.toLong(): Long = this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+fun LocalDateTime.toLong(): Long =
+    this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
 
-fun Long.toLocalDateTime(): LocalDateTime = Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
+fun Long.toLocalDateTime(): LocalDateTime =
+    Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.currentSystemDefault())
 
 fun LocalDate.toLong(): Long = this.toEpochDays().toLong()
 

@@ -7,6 +7,5 @@ interface TaskListDataSource {
     suspend fun editTaskList(taskList: TaskList)
     suspend fun deleteTaskList(id: Long)
     suspend fun getTaskList(id: Long): TaskList
-    fun getTaskLists(): List<TaskList>
-    fun getFlowTaskLists(): Flow<List<TaskList>>
+    fun getTaskLists(): Flow<List<TaskList>>
 }

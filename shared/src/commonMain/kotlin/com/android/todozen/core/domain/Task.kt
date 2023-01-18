@@ -8,11 +8,12 @@ data class Task(
     val id: Long? = null,
     val title: String = "",
     var done: Boolean = false,
-    var date: LocalDate? = null,
-    var time: LocalTime? = null,
+    val date: LocalDate? = null,
+    val time: LocalTime? = null,
     val created: LocalDateTime = DateTimeUtil.now(),
     val listId: Long? = null,
-    val listTitle: String = ""
+    val listTitle: String = "",
+    var inMyDay: Boolean = false
 ) : ListItem {
     override fun getUuid() = id
 }

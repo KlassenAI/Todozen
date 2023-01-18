@@ -4,9 +4,9 @@ import kotlinx.datetime.*
 
 object DateTimeUtil {
 
-    fun now(): LocalDateTime {
-        return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    }
+    fun now() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+    fun today(): LocalDate = now().date
 
     fun formatDateTime(date: LocalDate?, time: LocalTime?): String? {
         if (date == null) return null

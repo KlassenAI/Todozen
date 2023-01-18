@@ -3,6 +3,9 @@ package com.android.todozen.core.presentation
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<S : BaseState>: ViewModel() {
 
@@ -16,4 +19,8 @@ abstract class BaseViewModel<S : BaseState>: ViewModel() {
     }
 
     fun clearState() = updateState { initialState() }
+
+    protected fun doJob(block: suspend CoroutineScope.() -> Unit): Job {
+        return viewModelScope.launch { block() }
+    }
 }

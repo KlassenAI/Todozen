@@ -2,7 +2,6 @@ package com.android.todozen.core
 
 import android.app.Activity
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
@@ -23,13 +22,6 @@ fun RecyclerView.initVertical(adapter: BaseAdapterDelegate) {
 private fun RecyclerView.clearDecorations() {
     for (i in 0 until itemDecorationCount) { removeItemDecorationAt(i) }
 }
-
-var EditText.str: String
-    set(value) {
-        setText(value)
-        setSelection(value.length)
-    }
-    get() = text.toString()
 
 fun Fragment.showDialog(dialog: DialogFragment) {
     dialog.show(childFragmentManager, dialog::class.simpleName)

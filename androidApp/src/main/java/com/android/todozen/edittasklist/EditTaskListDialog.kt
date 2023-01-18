@@ -1,19 +1,16 @@
 package com.android.todozen.edittasklist
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.databinding.DialogEditTaskListBinding
-import com.android.todozen.core.str
-import com.android.todozen.edittasklist.EditTaskListState
-import com.android.todozen.edittasklist.EditTaskListViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dev.icerock.moko.mvvm.utils.bind
+import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class EditTaskListDialog private constructor(): BottomSheetDialogFragment() {
@@ -25,13 +22,31 @@ class EditTaskListDialog private constructor(): BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.getLongArray(TASK_LIST_ID)?.let { longArray ->
-            longArray.firstOrNull().let { viewModel.loadTaskList(it) }
-        }
-
-        viewModel.state.bind(viewLifecycleOwner) { state -> state?.let { render(state) } }
-
+        initViews()
+        initObservers()
         initListeners()
+    }
+
+    private fun initViews() {
+        val taskListId = arguments?.getLongArray(TASK_LIST_ID)?.firstOrNull()
+        viewModel.loadTaskList(taskListId)
+    }
+
+    private fun initObservers() {
+        viewModel.state.bindNotNull(viewLifecycleOwner) {
+            this.state = it
+            binding.etTitle.setText(it.title)
+        }
+    }
+
+    private fun initListeners() {
+        binding.btnEdit.setOnClickListener {
+            viewModel.editTaskList()
+            dismiss()
+        }
+        binding.etTitle.addTextChangedListener {
+            viewModel.updateTitle(it.toString())
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,41 +54,16 @@ class EditTaskListDialog private constructor(): BottomSheetDialogFragment() {
         setStyle(STYLE_NORMAL, R.style.ModalBottomSheetDialog)
     }
 
-    private fun render(state: EditTaskListState) {
-        this.state = state
-        binding.etTitle.str = state.title
-    }
-
-    private fun initListeners() {
-        binding.btnEdit.setOnClickListener {
-            updateEdits()
-            viewModel.editTaskList()
-            dismiss()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        updateEdits()
-    }
-
-    private fun updateEdits() {
-        viewModel.updateTitle(binding.etTitle.text.toString())
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        viewModel.clearState()
-    }
-
     companion object {
 
         const val TASK_LIST_ID = "taskListId"
 
-        fun getInstance(taskListId: Long? = null) = EditTaskListDialog().apply {
-            taskListId?.let {
-                arguments = bundleOf(TASK_LIST_ID to longArrayOf(taskListId))
-            }
+        fun getInstance(
+            taskListId: Long? = null
+        ) = EditTaskListDialog().apply {
+            val bundle = bundleOf()
+            taskListId?.let { bundle.putLongArray(TASK_LIST_ID, longArrayOf(taskListId)) }
+            arguments = bundle
         }
     }
 

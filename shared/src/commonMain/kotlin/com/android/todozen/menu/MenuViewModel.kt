@@ -3,7 +3,6 @@ package com.android.todozen.menu
 import com.android.todozen.core.data.TaskListDataSource
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.presentation.BaseViewModel
-import kotlinx.coroutines.launch
 
 class MenuViewModel(
     private val taskListDS: TaskListDataSource
@@ -15,15 +14,11 @@ class MenuViewModel(
         loadTaskLists()
     }
 
-    fun loadTaskLists() {
-        viewModelScope.launch {
-            taskListDS.getFlowTaskLists().collect {
-                updateState { copy(taskLists = listOf(TaskList(null, "Входящие")) + it) }
-            }
-        }
+    private fun loadTaskLists() {
+        doJob { taskListDS.getTaskLists().collect { updateState { copy(taskLists =  it) } } }
     }
 
     fun deleteTaskList(taskList: TaskList) {
-        viewModelScope.launch { taskListDS.deleteTaskList(taskList.id!!) }
+        doJob { taskListDS.deleteTaskList(taskList.id!!) }
     }
 }

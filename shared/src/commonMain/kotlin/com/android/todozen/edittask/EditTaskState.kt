@@ -11,4 +11,5 @@ data class EditTaskState(
     val time: LocalTime? = null,
     val listId: Long? = null,
     val listTitle: String = "",
+    val inMyDay: Boolean = false
 ): BaseState

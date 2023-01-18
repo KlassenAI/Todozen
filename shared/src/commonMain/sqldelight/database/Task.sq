@@ -6,12 +6,13 @@ CREATE TABLE TaskEntity(
     time INTEGER,
     created INTEGER NOT NULL,
     listId INTEGER,
+    inMyDay INTEGER AS Boolean DEFAULT 0 NOT NULL,
     FOREIGN KEY (listId) REFERENCES TaskListEntity(id)
 );
 
 editTask:
 INSERT OR REPLACE INTO TaskEntity
-VALUES (?,?,?,?,?,?,?);
+VALUES (?,?,?,?,?,?,?,?);
 
 deleteTask:
 DELETE FROM TaskEntity
@@ -19,27 +20,25 @@ WHERE id = ?;
 
 getTask:
 SELECT * FROM TaskEntity
-WHERE id = ?;
-
-getTaskWithListId:
-SELECT * FROM TaskEntity
-INNER JOIN TaskListEntity
+LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id
 WHERE TaskEntity.id = ?;
 
 getTasks:
 SELECT * FROM TaskEntity
-INNER JOIN TaskListEntity
+LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id
 WHERE listId = ?;
 
-getIncomingTasks:
+getTasksForToday:
 SELECT * FROM TaskEntity
-WHERE listId IS NULL;
+LEFT OUTER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id
+WHERE inMyDay = ? OR date = ?;
 
 getAllTasks:
 SELECT * FROM TaskEntity
-INNER JOIN TaskListEntity
+LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id;
 
 CREATE TABLE TaskListEntity (
