@@ -2,7 +2,11 @@ package com.android.todozen.core
 
 import android.app.Activity
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -34,4 +38,12 @@ fun View.visible(visible: Boolean) {
 inline fun <V : View, P> V.init(params: P?, crossinline initializer: V.(params: P) -> Unit) {
     visible(params != null)
     params?.let { initializer(this, it) }
+}
+
+fun Fragment.getColor(@ColorRes id: Int) = ContextCompat.getColor(requireContext(), id)
+
+fun Fragment.getColorList(@ColorRes id: Int) = ContextCompat.getColorStateList(requireContext(), id)
+
+fun ImageView.setImage(@DrawableRes id: Int) {
+    setImageResource(id)
 }

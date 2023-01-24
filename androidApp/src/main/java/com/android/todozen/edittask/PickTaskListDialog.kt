@@ -11,7 +11,7 @@ import com.android.todozen.databinding.DialogPickTaskListBinding
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.BaseAdapterDelegate
 import com.android.todozen.core.initVertical
-import com.android.todozen.core.taskListsAdapterDelegate
+import com.android.todozen.core.listDelegate
 import com.android.todozen.menu.MenuState
 import com.android.todozen.menu.MenuViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,7 +27,7 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     private var adapter: BaseAdapterDelegate? = null
 
     private fun getAdapter(currentTaskListId: Long?) = BaseAdapterDelegate(
-        taskListsAdapterDelegate(currentTaskListId, ::clickItem)
+        listDelegate(currentTaskListId, ::clickItem)
     )
 
     private fun clickItem(taskList: TaskList) {

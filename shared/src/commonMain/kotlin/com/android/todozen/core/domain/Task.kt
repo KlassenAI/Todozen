@@ -6,14 +6,17 @@ import kotlinx.datetime.LocalTime
 
 data class Task(
     val id: Long? = null,
-    val title: String = "",
-    var done: Boolean = false,
-    val date: LocalDate? = null,
-    val time: LocalTime? = null,
     val created: LocalDateTime = DateTimeUtil.now(),
-    val listId: Long? = null,
-    val listTitle: String = "",
-    var inMyDay: Boolean = false
+    var title: String = "",
+    var isDone: Boolean = false,
+    var date: LocalDate? = null,
+    var time: LocalTime? = null,
+    var listId: Long? = null,
+    var listTitle: String = "",
+    var isInMyDay: Boolean = false,
+    var isDeleted: Boolean = false,
+    var isFavorite: Boolean = false,
+    var updated: LocalDateTime = DateTimeUtil.now()
 ) : ListItem {
     override fun getUuid() = id
 }

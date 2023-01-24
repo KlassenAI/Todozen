@@ -14,13 +14,13 @@ abstract class BaseViewModel<S : BaseState>: ViewModel() {
 
     abstract fun initialState(): S
 
-    protected fun updateState(update: S.() -> S) {
+    protected fun state(update: S.() -> S) {
         _state.value = update(_state.value)
     }
 
-    fun clearState() = updateState { initialState() }
+    fun clearState() = state { initialState() }
 
-    protected fun doJob(block: suspend CoroutineScope.() -> Unit): Job {
+    protected fun action(block: suspend CoroutineScope.() -> Unit): Job {
         return viewModelScope.launch { block() }
     }
 }

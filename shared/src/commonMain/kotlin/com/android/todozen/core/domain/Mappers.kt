@@ -6,61 +6,106 @@ import kotlinx.datetime.*
 fun TaskEntity.map() = Task(
     id = id,
     title = title,
-    done = done,
+    isDone = isDone,
     date = date?.toLocalDate(),
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
-    listId = null,
+    listId = listId,
     listTitle = "",
-    inMyDay = inMyDay
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
 )
 
 fun GetTask.map() = Task(
     id = id,
     title = title,
-    done = done,
+    isDone = isDone,
     date = date?.toLocalDate(),
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
     listTitle = title_.orEmpty(),
-    inMyDay = inMyDay
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
 )
 
 fun GetTasks.map() = Task(
     id = id,
     title = title,
-    done = done,
+    isDone = isDone,
     date = date?.toLocalDate(),
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
     listTitle = title_.orEmpty(),
-    inMyDay = inMyDay
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
 )
 
 fun GetTasksForToday.map() = Task(
     id = id,
     title = title,
-    done = done,
+    isDone = isDone,
     date = date?.toLocalDate(),
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
     listTitle = title_.orEmpty(),
-    inMyDay = inMyDay
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
 )
 
 fun GetAllTasks.map() = Task(
     id = id,
     title = title,
-    done = done,
+    isDone = isDone,
     date = date?.toLocalDate(),
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     listId = id_,
     listTitle = title_.orEmpty(),
-    inMyDay = inMyDay
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
+)
+
+fun GetFavoriteTasks.map() = Task(
+    id = id,
+    title = title,
+    isDone = isDone,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    listId = id_,
+    listTitle = title_.orEmpty(),
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
+)
+
+fun GetDeletedTasks.map() = Task(
+    id = id,
+    title = title,
+    isDone = isDone,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    listId = id_,
+    listTitle = title_.orEmpty(),
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    updated = updated.toLocalDateTime()
 )
 
 fun TaskListEntity.map() = TaskList(

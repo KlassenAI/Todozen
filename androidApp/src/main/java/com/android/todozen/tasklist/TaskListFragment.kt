@@ -9,12 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
+import com.android.todozen.core.*
 import com.android.todozen.databinding.FragmentTaskListBinding
 import com.android.todozen.core.domain.Task
-import com.android.todozen.core.BaseAdapterDelegate
-import com.android.todozen.core.initVertical
-import com.android.todozen.core.showDialog
-import com.android.todozen.core.tasksAdapterDelegate
 import com.android.todozen.edittask.EditTaskDialog
 import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -27,13 +24,9 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
     private val tasksAdapter = getTaskAdapter()
     private val doneTasksAdapter = getTaskAdapter()
 
-    private fun getTaskAdapter() = BaseAdapterDelegate(
-        tasksAdapterDelegate(::clickTask, ::checkTask, ::deleteTask)
-    )
+    private fun getTaskAdapter() = adapter(taskDelegate(::clickTask, ::checkTask, ::deleteTask))
 
-    private fun clickTask(task: Task) {
-        showDialog(EditTaskDialog.getInstance(task.id))
-    }
+    private fun clickTask(task: Task) = showDialog(EditTaskDialog.getInstance(task.id))
     private fun checkTask(task: Task) = viewModel.checkTask(task)
     private fun deleteTask(task: Task) = viewModel.deleteTask(task)
 

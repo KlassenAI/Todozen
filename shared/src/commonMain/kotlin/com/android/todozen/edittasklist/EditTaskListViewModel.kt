@@ -11,19 +11,19 @@ class EditTaskListViewModel(
 
     fun updateTitle(title: String) {
         if (title == state.value.title) return
-        updateState { copy(title = title) }
+        state { copy(title = title) }
     }
 
     fun loadTaskList(taskListId: Long?) {
-        doJob {
+        action {
             val taskList = taskListId?.let { taskDS.getTaskList(it) }
-            updateState { EditTaskListState.getFromTaskList(taskList) }
+            state { EditTaskListState.getFromTaskList(taskList) }
         }
     }
 
     fun editTaskList() {
         val taskList = _state.value.getTaskList()
-        doJob {
+        action {
             taskDS.editTaskList(taskList)
             clearState()
         }

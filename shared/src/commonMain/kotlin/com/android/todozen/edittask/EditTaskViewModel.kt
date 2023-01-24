@@ -8,53 +8,43 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class EditTaskViewModel(
-    private val taskDS: TaskDataSource,
-    private val taskListDS: TaskListDataSource,
+    private val taskDS: TaskDataSource
 ) : BaseViewModel<EditTaskState>() {
 
     override fun initialState() = EditTaskState()
 
     fun updateTitle(title: String) {
-        if (title == state.value.title) return
-        updateState { copy(title = title) }
+        if (title == state.value.task.title) return
+        state { copy(task = task.apply { this.title = title }) }
     }
 
     fun updateDateTime(date: LocalDate?, time: LocalTime?) {
-        updateState { copy(date = date, time = time) }
+        state { copy(task = task.apply { this.date = date; this.time = time }) }
     }
 
     fun updateTaskList(listId: Long?, listTitle: String) {
-        updateState { copy(listId = listId, listTitle = listTitle) }
+        state { copy(task = task.apply { this.listId = listId; this.listTitle = listTitle }) }
     }
 
-    fun updateInMyDay() {
-        updateState { copy(inMyDay = inMyDay.not()) }
-    }
+    fun updateInMyDay() = state { copy(task = task.apply { isInMyDay = isInMyDay.not() }) }
+
+    fun updateFavorite() = state { copy(task = task.apply { isFavorite = isFavorite.not() }) }
 
     fun loadTask(taskId: Long?) {
-        doJob {
+        action {
             val task = taskId?.let { taskDS.getTask(it) } ?: Task()
-            updateState {
-                copy(
-                    id = task.id,
-                    title = task.title,
-                    date = task.date,
-                    time = task.time,
-                    listId = task.listId,
-                    listTitle = task.listTitle,
-                    inMyDay = task.inMyDay
-                )
-            }
+            state { copy(id = task.id, task = task) }
         }
     }
 
-    fun editTask() {
-        val state = _state.value
-        val task = Task(
-            id = state.id, title = state.title, date = state.date, time = state.time,
-            listId = state.listId, listTitle = state.listTitle, inMyDay = state.inMyDay
-        )
-        doJob { taskDS.editTask(task) }
+    fun editTask(state: EditTaskState) {
+        action {
+            if (state.id == null) {
+                taskDS.insertTask(state.task)
+            } else {
+                taskDS.updateTask(state.task)
+            }
+        }
         clearState()
     }
 }

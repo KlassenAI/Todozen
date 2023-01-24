@@ -27,6 +27,14 @@
                 android:id="@+id/containerIncomingTasks"
                 layout="@layout/item_task_list_2" />
 
+            <include
+                android:id="@+id/containerFavoriteTasks"
+                layout="@layout/item_task_list_2" />
+
+            <include
+                android:id="@+id/containerDeletedTasks"
+                layout="@layout/item_task_list_2" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTaskLists"
                 android:layout_weight="1"

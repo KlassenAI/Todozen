@@ -38,6 +38,42 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/containerMyDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/ivIconMyDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_today"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/containerFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/ivIconFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_star_24"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/containerDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,24 +123,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/containerMyDay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="8dp">
 
-            <ImageView
-                android:id="@+id/ivIconMyDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_today_24"
-                tools:ignore="ContentDescription"
-                app:tint="@color/gray" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

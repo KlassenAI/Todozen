@@ -15,10 +15,10 @@ class MenuViewModel(
     }
 
     private fun loadTaskLists() {
-        doJob { taskListDS.getTaskLists().collect { updateState { copy(taskLists =  it) } } }
+        action { taskListDS.getTaskLists().collect { state { copy(taskLists = it) } } }
     }
 
     fun deleteTaskList(taskList: TaskList) {
-        doJob { taskListDS.deleteTaskList(taskList.id!!) }
+        action { taskListDS.deleteTaskList(taskList.id!!) }
     }
 }

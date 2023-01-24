@@ -8,7 +8,7 @@ import com.android.todozen.tasklist.TaskListViewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single { EditTaskViewModel(get(), get()) }
+    single { EditTaskViewModel(get()) }
     single { TaskListViewModel(get()) }
     single { EditDateViewModel(get()) }
     single { MenuViewModel(get()) }

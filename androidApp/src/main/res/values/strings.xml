@@ -3,6 +3,8 @@
     <string name="all">Все</string>
     <string name="my_day">Мой день</string>
     <string name="incoming">Входящие</string>
+    <string name="favorite">Избранные</string>
+    <string name="deleted">Корзина</string>
 
     <string name="add_time">+ Добавить время</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.android.todozen.edittask
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,8 @@ import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
+import com.android.todozen.core.getColorList
+import com.android.todozen.core.setImage
 import com.android.todozen.core.showDialog
 import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
@@ -41,44 +44,44 @@ class EditTaskDialog private constructor() : BottomSheetDialogFragment() {
     private fun initObservers() {
         viewModel.state.bindNotNull(viewLifecycleOwner) {
             state = it
-            if (binding.etTitle.text.toString() != it.title) {
+            if (binding.etTitle.text.toString() != it.task.title) {
                 val wasEmpty = binding.etTitle.text.isEmpty()
-                binding.etTitle.setText(it.title)
-                if (wasEmpty) binding.etTitle.setSelection(it.title.length)
+                binding.etTitle.setText(it.task.title)
+                if (wasEmpty) binding.etTitle.setSelection(it.task.title.length)
             }
-            binding.tvTitleDate.text = formatDateTime(it.date, it.time)
-            binding.tvTitleTaskList.text = it.listTitle
-            binding.ivIconMyDay.imageTintList = ContextCompat.getColorStateList(
-                requireContext(), if (it.inMyDay) R.color.black else R.color.gray
-            )
+            val dateTime = formatDateTime(it.task.date, it.task.time)
+            binding.tvTitleDate.text = dateTime
+            binding.ivIconDate.isSelected = dateTime.orEmpty().isNotEmpty()
+            val listTitle = it.task.listTitle
+            binding.tvTitleTaskList.text = listTitle
+            binding.ivIconTaskList.isSelected = listTitle.isNotEmpty()
+            binding.ivIconMyDay.isSelected = it.task.isInMyDay
+            binding.ivIconFavorite.isSelected = it.task.isFavorite
         }
     }
 
-    private fun initListeners() {
-        binding.etTitle.addTextChangedListener {
-            viewModel.updateTitle(it.toString())
-        }
-        binding.etTitle.setOnEditorActionListener { _, i, _ ->
+    private fun initListeners() = with(binding) {
+        etTitle.addTextChangedListener { viewModel.updateTitle(it.toString()) }
+        etTitle.setOnEditorActionListener { _, i, _ ->
             var handled = false
             if (i == EditorInfo.IME_ACTION_DONE) {
-                viewModel.editTask()
+                viewModel.editTask(state)
                 handled = true
             }
             handled
         }
-        binding.btnEdit.setOnClickListener {
-            viewModel.editTask()
+        btnEdit.setOnClickListener {
+            viewModel.editTask(state)
             dismiss()
         }
-        binding.containerDate.setOnClickListener {
-            showDialog(EditDateDialog.getInstance(state.date, state.time))
+        containerDate.setOnClickListener {
+            showDialog(EditDateDialog.getInstance(state.task.date, state.task.time))
         }
-        binding.containerList.setOnClickListener {
-            showDialog(PickTaskListDialog.getInstance(state.listId))
+        containerList.setOnClickListener {
+            showDialog(PickTaskListDialog.getInstance(state.task.listId))
         }
-        binding.containerMyDay.setOnClickListener {
-            viewModel.updateInMyDay()
-        }
+        containerMyDay.setOnClickListener { viewModel.updateInMyDay() }
+        containerFavorite.setOnClickListener { viewModel.updateFavorite() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

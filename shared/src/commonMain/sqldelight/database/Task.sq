@@ -1,18 +1,25 @@
 CREATE TABLE TaskEntity(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     title TEXT NOT NULL,
-    done INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    isDone INTEGER AS Boolean DEFAULT 0 NOT NULL,
     date INTEGER,
     time INTEGER,
     created INTEGER NOT NULL,
+    updated INTEGER NOT NULL,
     listId INTEGER,
-    inMyDay INTEGER AS Boolean DEFAULT 0 NOT NULL,
-    FOREIGN KEY (listId) REFERENCES TaskListEntity(id)
+    isInMyDay INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    isDeleted INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    FOREIGN KEY (listId) REFERENCES TaskListEntity(id) ON DELETE CASCADE
 );
 
-editTask:
-INSERT OR REPLACE INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?);
+insertTask:
+INSERT INTO TaskEntity
+VALUES (?,?,?,?,?,?,?,?,?,?,?);
+
+updateTask:
+REPLACE INTO TaskEntity
+VALUES (?,?,?,?,?,?,?,?,?,?,?);
 
 deleteTask:
 DELETE FROM TaskEntity
@@ -28,13 +35,25 @@ getTasks:
 SELECT * FROM TaskEntity
 LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id
-WHERE listId = ?;
+WHERE listId = ? AND isDeleted = ?;
 
 getTasksForToday:
 SELECT * FROM TaskEntity
 LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id
-WHERE inMyDay = ? OR date = ?;
+WHERE (isInMyDay = ? OR date = ?) AND isDeleted = ?;
+
+getFavoriteTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id
+WHERE isFavorite = ? AND isDeleted = ?;
+
+getDeletedTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN TaskListEntity
+ON TaskEntity.listId == TaskListEntity.id
+WHERE isDeleted = ?;
 
 getAllTasks:
 SELECT * FROM TaskEntity

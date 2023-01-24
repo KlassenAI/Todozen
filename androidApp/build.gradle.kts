@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+
     implementation(project(":shared"))
 
     // Architecture
@@ -58,6 +59,7 @@ dependencies {
     val adapterDelegate = "4.3.2"
     implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl:$adapterDelegate")
     implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:$adapterDelegate")
+    implementation("com.github.QuadFlask:colorpicker:0.0.15")
 
     // Navigation
     val nav = "2.5.3"

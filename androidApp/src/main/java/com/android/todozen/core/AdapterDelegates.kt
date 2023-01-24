@@ -7,9 +7,14 @@ import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
 import com.android.todozen.core.domain.Task
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.domain.ListItem
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
-fun tasksAdapterDelegate(
+fun adapter(
+    vararg adapterDelegates: AdapterDelegate<List<ListItem>>
+) = BaseAdapterDelegate(*adapterDelegates)
+
+fun taskDelegate(
     clickListener: (Task) -> Unit,
     checkListener: (Task) -> Unit,
     deleteListener: (Task) -> Unit
@@ -23,11 +28,11 @@ fun tasksAdapterDelegate(
         binding.tvTitle.text = item.title
         binding.tvDate.init(formatDateTime(item.date, item.time)) { text = it }
         binding.tvList.init(item.listId) { text = item.listTitle }
-        binding.btnDone.isChecked = item.done
+        binding.btnDone.isChecked = item.isDone
     }
 }
 
-fun taskListsAdapterDelegate(
+fun listDelegate(
     clickListener: (TaskList) -> Unit,
     deleteListener: ((TaskList) -> Unit)? = null
 ) = adapterDelegateViewBinding<TaskList, ListItem, ItemTaskListBinding>(
@@ -40,7 +45,7 @@ fun taskListsAdapterDelegate(
     }
 }
 
-fun taskListsAdapterDelegate(
+fun listDelegate(
     currentTaskListId: Long?,
     clickListener: (TaskList) -> Unit,
 ) = adapterDelegateViewBinding<TaskList, ListItem, ItemTaskList2Binding>(

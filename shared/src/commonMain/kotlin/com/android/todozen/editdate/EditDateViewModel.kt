@@ -11,7 +11,7 @@ class EditDateViewModel(
 
     override fun initialState() = EditDateState()
 
-    fun updateDate(date: LocalDate?) = updateState { copy(date = date) }
+    fun updateDate(date: LocalDate?) = state { copy(date = date) }
 
-    fun updateTime(time: LocalTime?) = updateState { copy(time = time) }
+    fun updateTime(time: LocalTime?) = state { copy(time = time) }
 }
