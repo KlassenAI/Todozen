@@ -2,6 +2,8 @@ package com.android.todozen.core
 
 import android.app.Activity
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.ColorRes
@@ -24,19 +26,25 @@ fun RecyclerView.initVertical(adapter: BaseAdapterDelegate) {
 
 // При сохранении состояния фрагментов декораторы сохраняются и отступы между элементами растут
 private fun RecyclerView.clearDecorations() {
-    for (i in 0 until itemDecorationCount) { removeItemDecorationAt(i) }
+    for (i in 0 until itemDecorationCount) {
+        removeItemDecorationAt(i)
+    }
 }
 
 fun Fragment.showDialog(dialog: DialogFragment) {
     dialog.show(childFragmentManager, dialog::class.simpleName)
 }
 
-fun View.visible(visible: Boolean) {
-    isVisible = visible
+fun View.visible(visible: Boolean, hide: Boolean = false) {
+    this.visibility = if (visible) View.VISIBLE else if (hide) View.INVISIBLE else View.GONE
 }
 
-inline fun <V : View, P> V.init(params: P?, crossinline initializer: V.(params: P) -> Unit) {
-    visible(params != null)
+inline fun <V : View, P> V.init(
+    params: P?,
+    hide: Boolean = false,
+    crossinline initializer: V.(params: P) -> Unit
+) {
+    visible(params != null, hide)
     params?.let { initializer(this, it) }
 }
 
@@ -46,4 +54,15 @@ fun Fragment.getColorList(@ColorRes id: Int) = ContextCompat.getColorStateList(r
 
 fun ImageView.setImage(@DrawableRes id: Int) {
     setImageResource(id)
+}
+
+fun EditText.setActionDoneListener(block: () -> Unit) {
+    setOnEditorActionListener { textView, i, keyEvent ->
+        var handled = false
+        if (i == EditorInfo.IME_ACTION_DONE) {
+            block()
+            handled = true
+        }
+        handled
+    }
 }

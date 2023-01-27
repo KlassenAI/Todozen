@@ -15,7 +15,9 @@ class TaskListDataSourceImpl(db: TaskDatabase) : TaskListDataSource {
     override suspend fun editTaskList(taskList: TaskList) {
         queries.editTaskList(
             id = taskList.id,
-            title = taskList.title
+            title = taskList.title,
+            isFavorite = taskList.isFavorite,
+            color = taskList.color?.toLong(),
         )
     }
 

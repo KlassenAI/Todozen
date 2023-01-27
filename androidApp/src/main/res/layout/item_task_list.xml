@@ -7,6 +7,14 @@
     android:orientation="horizontal"
     android:padding="4dp">
 
+    <ImageView
+        android:id="@+id/ivColor"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_color_selected_24"
+        tools:ignore="ContentDescription" />
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
@@ -16,10 +24,10 @@
 
     <ImageButton
         android:id="@+id/btnDelete"
-        android:background="@android:color/transparent"
-        android:src="@android:drawable/ic_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_delete"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>

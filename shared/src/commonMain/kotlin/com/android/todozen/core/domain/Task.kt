@@ -13,6 +13,7 @@ data class Task(
     var time: LocalTime? = null,
     var listId: Long? = null,
     var listTitle: String = "",
+    var listColor: Int? = null,
     var isInMyDay: Boolean = false,
     var isDeleted: Boolean = false,
     var isFavorite: Boolean = false,

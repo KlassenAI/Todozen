@@ -1,5 +1,6 @@
 package com.android.todozen.core
 
+import com.android.todozen.R
 import com.android.todozen.databinding.ItemTaskBinding
 import com.android.todozen.databinding.ItemTaskList2Binding
 import com.android.todozen.databinding.ItemTaskListBinding
@@ -25,6 +26,7 @@ fun taskDelegate(
     binding.btnDone.setOnClickListener { checkListener.invoke(item) }
     binding.btnDelete.setOnClickListener { deleteListener.invoke(item) }
     bind { payloads ->
+        binding.ivListColor.setBackgroundColor(item.listColor ?: getColor(R.color.transparent))
         binding.tvTitle.text = item.title
         binding.tvDate.init(formatDateTime(item.date, item.time)) { text = it }
         binding.tvList.init(item.listId) { text = item.listTitle }
@@ -41,7 +43,8 @@ fun listDelegate(
     itemView.setOnClickListener { clickListener.invoke(item) }
     binding.btnDelete.setOnClickListener { deleteListener?.invoke(item) }
     bind { payloads ->
-        binding.tvTitle.text = "${item.id} ${item.title}"
+        binding.ivColor.init(item.color, true) { setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN) }
+        binding.tvTitle.text = item.title
     }
 }
 
@@ -53,6 +56,7 @@ fun listDelegate(
 ) {
     itemView.setOnClickListener { clickListener.invoke(item) }
     bind { payloads ->
-        binding.tvTitle.text = "${item.id == currentTaskListId} ${item.id} ${item.title}"
+        binding.ivColor.init(item.color, true) { setColorFilter(it, android.graphics.PorterDuff.Mode.SRC_IN) }
+        binding.tvTitle.text = item.title
     }
 }

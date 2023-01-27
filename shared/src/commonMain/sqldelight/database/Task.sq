@@ -47,7 +47,7 @@ getFavoriteTasks:
 SELECT * FROM TaskEntity
 LEFT OUTER JOIN TaskListEntity
 ON TaskEntity.listId == TaskListEntity.id
-WHERE isFavorite = ? AND isDeleted = ?;
+WHERE TaskEntity.isFavorite = ? AND isDeleted = ?;
 
 getDeletedTasks:
 SELECT * FROM TaskEntity
@@ -62,12 +62,14 @@ ON TaskEntity.listId == TaskListEntity.id;
 
 CREATE TABLE TaskListEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    title TEXT NOT NULL
+    title TEXT NOT NULL,
+    isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    color INTEGER
 );
 
 editTaskList:
 INSERT OR REPLACE INTO TaskListEntity
-VALUES (?,?);
+VALUES (?,?,?,?);
 
 deleteTaskList:
 DELETE FROM TaskListEntity
