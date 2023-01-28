@@ -5,5 +5,5 @@ import com.android.todozen.core.presentation.BaseState
 
 data class EditTaskListState(
     val id: Long? = null,
-    val list: TaskList = TaskList(),
+    val taskList: TaskList = TaskList(),
 ): BaseState

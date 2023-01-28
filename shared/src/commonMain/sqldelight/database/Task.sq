@@ -64,12 +64,17 @@ CREATE TABLE TaskListEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     title TEXT NOT NULL,
     isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
-    color INTEGER
+    color INTEGER,
+    position INTEGER NOT NULL
 );
 
-editTaskList:
-INSERT OR REPLACE INTO TaskListEntity
-VALUES (?,?,?,?);
+insertTaskList:
+INSERT INTO TaskListEntity
+VALUES (?,?,?,?,?);
+
+updateTaskList:
+REPLACE INTO TaskListEntity
+VALUES (?,?,?,?,?);
 
 deleteTaskList:
 DELETE FROM TaskListEntity
@@ -80,4 +85,8 @@ SELECT * FROM TaskListEntity
 WHERE id = ?;
 
 getAllTaskLists:
-SELECT * FROM TaskListEntity;
+SELECT * FROM TaskListEntity
+ORDER BY position ASC;
+
+getTaskListsCount:
+SELECT COUNT(*) FROM TaskListEntity;

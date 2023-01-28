@@ -120,6 +120,7 @@ fun TaskListEntity.map() = TaskList(
     title = title,
     isFavorite = isFavorite,
     color = color?.toInt(),
+    position = position
 )
 
 fun LocalDateTime.toLong(): Long =

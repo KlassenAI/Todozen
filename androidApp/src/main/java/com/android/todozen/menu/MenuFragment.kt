@@ -1,6 +1,7 @@
 package com.android.todozen.menu
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -13,6 +14,7 @@ import com.android.todozen.edittasklist.EditTaskListDialog
 import com.android.todozen.tasklist.TaskListViewModel
 import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import java.util.*
 
 class MenuFragment : Fragment(R.layout.fragment_menu) {
 
@@ -20,6 +22,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     private val menuViewModel by sharedViewModel<MenuViewModel>()
     private val listViewModel by sharedViewModel<TaskListViewModel>()
     private val adapter = adapter(listDelegate(::clickItem, ::deleteItem))
+    private var state = MenuState()
 
     private fun clickItem(taskList: TaskList) {
         listViewModel.loadTasks(taskList.id)
@@ -37,7 +40,9 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     }
 
     private fun initViews() {
-        binding.rvTaskLists.initVertical(adapter)
+        binding.rvTaskLists.initVertical(adapter) { from, to ->
+            menuViewModel.swapTaskLists(from, to)
+        }
         binding.containerAllTasks.tvTitle.text = getString(R.string.all)
         binding.containerTodayTasks.tvTitle.text = getString(R.string.my_day)
         binding.containerIncomingTasks.tvTitle.text = getString(R.string.incoming)
@@ -46,7 +51,11 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     }
 
     private fun initObservers() {
-        menuViewModel.state.bindNotNull(this) { adapter.items = it.taskLists }
+        menuViewModel.state.bindNotNull(this) {
+            state = it
+            Log.d("aboba", it.taskLists.toString())
+            adapter.items = it.taskLists
+        }
     }
 
     private fun initListeners() = with(binding) {

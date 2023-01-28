@@ -11,27 +11,37 @@ class EditTaskListViewModel(
     override fun initialState() = EditTaskListState()
 
     fun updateTitle(title: String) {
-        if (title == state.value.list.title) return
-        state { copy(list = list.apply { this.title = title }) }
+        if (title == state.value.taskList.title) return
+        state { copy(taskList = taskList.apply { this.title = title }) }
     }
 
-    fun updateColor(color: Int) = state { copy(list = list.apply { this.color = color }) }
+    fun updateColor(color: Int) = state { copy(taskList = taskList.apply { this.color = color }) }
 
-    fun clearColor() = state { copy(list = list.apply { color = null }) }
+    fun clearColor() = state { copy(taskList = taskList.apply { color = null }) }
 
-    fun updateFavorite() = state { copy(list = list.apply { isFavorite = isFavorite.not() }) }
+    fun updateFavorite() = state { copy(taskList = taskList.apply { isFavorite = isFavorite.not() }) }
 
     fun loadTaskList(taskListId: Long?) {
         action {
-            val list = taskListId?.let { taskDS.getTaskList(it) } ?: TaskList()
-            state { copy(id = taskListId, list = list) }
+            val taskList: TaskList
+            if (taskListId == null) {
+                taskList = TaskList(position = taskDS.getTaskListsCount())
+            } else {
+                taskList = taskDS.getTaskList(taskListId)
+            }
+            state { copy(id = taskListId, taskList = taskList) }
         }
     }
 
     fun editTaskList() {
         action {
-            taskDS.editTaskList(_state.value.list)
+            if (_state.value.id == null) {
+                taskDS.insertTaskList(_state.value.taskList)
+            } else {
+                taskDS.updateTaskList(_state.value.taskList)
+            }
             clearState()
+            loadTaskList(null)
         }
     }
 }

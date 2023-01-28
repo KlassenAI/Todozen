@@ -12,7 +12,7 @@ import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
 fun adapter(
-    vararg adapterDelegates: AdapterDelegate<List<ListItem>>
+    vararg adapterDelegates: AdapterDelegate<kotlin.collections.List<ListItem>>
 ) = BaseAdapterDelegate(*adapterDelegates)
 
 fun taskDelegate(

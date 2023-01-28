@@ -1,6 +1,7 @@
 package com.android.todozen.core
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -12,8 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 fun Activity.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -22,6 +25,35 @@ fun Activity.toast(message: String) {
 fun RecyclerView.initVertical(adapter: BaseAdapterDelegate) {
     layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     this.adapter = adapter
+}
+
+fun RecyclerView.initVertical(
+    adapter: BaseAdapterDelegate,
+    onMove: ((from: Int, to: Int) -> Unit)? = null
+) {
+    layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    this.adapter = adapter
+
+    onMove?.let {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
+        ) {
+
+            override fun onMove(
+                recycler: RecyclerView,
+                source: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val from = source.absoluteAdapterPosition
+                val to = target.absoluteAdapterPosition
+                onMove(from, to)
+                adapter.notifyItemMoved(from, to)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+        }).apply { attachToRecyclerView(this@initVertical) }
+    }
 }
 
 // При сохранении состояния фрагментов декораторы сохраняются и отступы между элементами растут

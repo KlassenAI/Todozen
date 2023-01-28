@@ -38,8 +38,10 @@ kotlin {
                 val sqlCoroutines = "1.5.4"
                 val datetime = "0.4.0"
                 val coroutines = "1.6.4"
-                val napier = "2.6.1"
+                val kermit = "1.2.2"
                 val koin = "3.2.2"
+
+                implementation(kotlin("stdlib-common"))
 
                 // Storage
                 implementation("com.squareup.sqldelight:runtime:$sqldelight")
@@ -52,7 +54,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
 
                 // Log
-                implementation("io.github.aakira:napier:$napier")
+                implementation("co.touchlab:kermit:$kermit")
 
                 // Dependency Injection
                 implementation("io.insert-koin:koin-core:$koin")

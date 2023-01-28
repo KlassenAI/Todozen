@@ -35,7 +35,7 @@ abstract class BaseBottomSheetDialogFragment
 
     abstract fun initListeners()
 
-    abstract fun render(state: S)
+    abstract fun render(state: S): Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
