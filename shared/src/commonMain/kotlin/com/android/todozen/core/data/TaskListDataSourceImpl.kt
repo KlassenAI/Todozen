@@ -26,8 +26,11 @@ class TaskListDataSourceImpl(db: TaskDatabase) : TaskListDataSource {
         updateQueryTaskList(taskList)
     }
 
-    override suspend fun deleteTaskList(id: Long) {
-        queries.deleteTaskList(id)
+    override suspend fun deleteTaskList(taskList: TaskList) {
+        queries.transaction {
+            queries.deleteTaskList(taskList.id!!)
+            queries.reduceTaskListPositions(taskList.position)
+        }
     }
 
     override suspend fun getTaskList(id: Long): TaskList {
@@ -40,10 +43,9 @@ class TaskListDataSourceImpl(db: TaskDatabase) : TaskListDataSource {
 
     override suspend fun getTaskListsCount(): Long = queries.getTaskListsCount().executeAsOne()
 
-    override suspend fun updateTaskLists(taskList: TaskList, taskList2: TaskList) {
+    override suspend fun updateTaskLists(taskLists: List<TaskList>) {
         return queries.transaction {
-            updateQueryTaskList(taskList)
-            updateQueryTaskList(taskList2)
+            taskLists.forEach { updateQueryTaskList(it) }
         }
     }
 

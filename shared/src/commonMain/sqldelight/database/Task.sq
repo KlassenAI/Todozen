@@ -80,6 +80,11 @@ deleteTaskList:
 DELETE FROM TaskListEntity
 WHERE id = ?;
 
+reduceTaskListPositions:
+UPDATE TaskListEntity
+SET position = position - 1
+WHERE position > ?;
+
 getTaskList:
 SELECT * FROM TaskListEntity
 WHERE id = ?;

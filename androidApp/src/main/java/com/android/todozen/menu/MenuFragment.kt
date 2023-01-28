@@ -39,21 +39,18 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
         initListeners()
     }
 
-    private fun initViews() {
-        binding.rvTaskLists.initVertical(adapter) { from, to ->
-            menuViewModel.swapTaskLists(from, to)
-        }
-        binding.containerAllTasks.tvTitle.text = getString(R.string.all)
-        binding.containerTodayTasks.tvTitle.text = getString(R.string.my_day)
-        binding.containerIncomingTasks.tvTitle.text = getString(R.string.incoming)
-        binding.containerFavoriteTasks.tvTitle.text = getString(R.string.favorite)
-        binding.containerDeletedTasks.tvTitle.text = getString(R.string.deleted)
+    private fun initViews() = with(binding) {
+        rvTaskLists.initVertical(adapter) { from, to -> menuViewModel.swapTaskLists(from, to) }
+        containerAllTasks.tvTitle.text = getString(R.string.all)
+        containerTodayTasks.tvTitle.text = getString(R.string.my_day)
+        containerIncomingTasks.tvTitle.text = getString(R.string.incoming)
+        containerFavoriteTasks.tvTitle.text = getString(R.string.favorite)
+        containerDeletedTasks.tvTitle.text = getString(R.string.deleted)
     }
 
     private fun initObservers() {
         menuViewModel.state.bindNotNull(this) {
             state = it
-            Log.d("aboba", it.taskLists.toString())
             adapter.items = it.taskLists
         }
     }
