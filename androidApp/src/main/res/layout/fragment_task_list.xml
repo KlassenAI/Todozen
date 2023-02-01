@@ -16,6 +16,15 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOutdatedTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:padding="4dp"
+                android:visibility="gone"
+                tools:listitem="@layout/item_task" />
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

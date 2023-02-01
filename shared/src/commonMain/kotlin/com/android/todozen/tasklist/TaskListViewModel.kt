@@ -1,10 +1,13 @@
 package com.android.todozen.tasklist
 
 import com.android.todozen.core.data.TaskDataSource
+import com.android.todozen.core.domain.DateTimeUtil
 import com.android.todozen.core.domain.Task
 import com.android.todozen.core.presentation.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.cancellable
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.daysUntil
 
 class TaskListViewModel(
     private val taskDS: TaskDataSource
@@ -15,7 +18,7 @@ class TaskListViewModel(
     private var job: Job? = null
 
     init {
-        loadTasks(null)
+        loadAllTasks()
     }
 
     fun loadAllTasks() {
@@ -51,18 +54,11 @@ class TaskListViewModel(
         action {
             if (task.isDeleted) {
                 taskDS.deleteTask(task.id!!)
-            } else {                                                 
+            } else {
                 taskDS.updateTask(task.apply { isDeleted = isDeleted.not() })
             }
         }
     }
 
-    private fun updateTasks(tasks: List<Task>) {
-        state {
-            copy(
-                tasks = tasks.filter { it.isDone.not() },
-                doneTasks = tasks.filter { it.isDone }
-            )
-        }
-    }
+    private fun updateTasks(tasks: List<Task>) = state { copy(tasks = tasks) }
 }
