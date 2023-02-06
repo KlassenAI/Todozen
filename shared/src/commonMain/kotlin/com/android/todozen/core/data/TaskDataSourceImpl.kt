@@ -1,11 +1,8 @@
 package com.android.todozen.core.data
 
 import com.android.todozen.TaskDatabase
-import com.android.todozen.core.domain.DateTimeUtil
+import com.android.todozen.core.domain.*
 import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.android.todozen.core.domain.Task
-import com.android.todozen.core.domain.map
-import com.android.todozen.core.domain.toLong
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -23,10 +20,11 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             isDone = task.isDone,
             date = task.date?.toLong(),
             time = task.time?.toLong(),
-            listId = task.listId,
+            listId = task.list.id,
             isInMyDay = task.isInMyDay,
             isDeleted = task.isDeleted,
-            isFavorite = task.isFavorite
+            isFavorite = task.isFavorite,
+            priorityId = task.priority.id
         )
     }
 
@@ -39,10 +37,11 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             isDone = task.isDone,
             date = task.date?.toLong(),
             time = task.time?.toLong(),
-            listId = task.listId,
+            listId = task.list.id,
             isInMyDay = task.isInMyDay,
             isDeleted = task.isDeleted,
-            isFavorite = task.isFavorite
+            isFavorite = task.isFavorite,
+            priorityId = task.priority.id
         )
     }
 
@@ -52,6 +51,10 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
 
     override suspend fun getTask(id: Long): Task {
         return queries.getTask(id).executeAsOne().map()
+    }
+
+    override suspend fun getPriorities(): List<Priority> {
+        return queries.getPriorities().executeAsList().map { it.map() }
     }
 
     override fun getTasks(listId: Long?): Flow<List<Task>> {

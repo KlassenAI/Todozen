@@ -60,6 +60,7 @@ dependencies {
     implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl:$adapterDelegate")
     implementation("com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding:$adapterDelegate")
     implementation("com.github.QuadFlask:colorpicker:0.0.15")
+    implementation("com.github.skydoves:powermenu:2.2.2")
 
     // Navigation
     val nav = "2.5.3"

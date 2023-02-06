@@ -58,12 +58,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list) {
         binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
     }
 
-    private fun createRecycler(title: String): CustomRecyclerView {
-        return CustomRecyclerView(requireContext()).also { list ->
-            list.title = title
-            list.adapter = getTaskAdapter()
-            list.btnHide.setOnClickListener { list.isHide = list.isHide.not() }
-            binding.llContainer.addView(list)
-        }
+    private fun createRecycler(title: String) = CustomRecyclerView(requireContext()).also { list ->
+        list.title = title
+        list.adapter = getTaskAdapter()
+        list.btnHide.setOnClickListener { list.isHide = list.isHide.not() }
+        binding.llContainer.addView(list)
     }
 }

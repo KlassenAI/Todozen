@@ -3,12 +3,16 @@ package com.android.todozen.edittask
 import com.android.todozen.core.domain.Task
 import com.android.todozen.core.data.TaskDataSource
 import com.android.todozen.core.data.TaskListDataSource
+import com.android.todozen.core.domain.Priority
+import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.presentation.BaseViewModel
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class EditTaskViewModel(
-    private val taskDS: TaskDataSource
+    private val taskDS: TaskDataSource,
+    val eventsDispatcher: EventsDispatcher<EditTaskListener>
 ) : BaseViewModel<EditTaskState>() {
 
     override fun initialState() = EditTaskState()
@@ -22,13 +26,17 @@ class EditTaskViewModel(
         state { copy(task = task.apply { this.date = date; this.time = time }) }
     }
 
-    fun updateTaskList(listId: Long?, listTitle: String) {
-        state { copy(task = task.apply { this.listId = listId; this.listTitle = listTitle }) }
+    fun updateTaskList(taskList: TaskList) {
+        state { copy(task = task.apply { this.list = taskList }) }
     }
 
     fun updateInMyDay() = state { copy(task = task.apply { isInMyDay = isInMyDay.not() }) }
 
     fun updateFavorite() = state { copy(task = task.apply { isFavorite = isFavorite.not() }) }
+
+    fun updatePriority(priority: Priority) {
+        state { copy(task = task.apply { this.priority = priority }) }
+    }
 
     fun loadTask(taskId: Long?) {
         action {
@@ -46,5 +54,13 @@ class EditTaskViewModel(
             }
         }
         clearState()
+    }
+
+    fun showPriorities() {
+        action {
+            val priorities = taskDS.getPriorities().toMutableList()
+            priorities.add(Priority(null, "Нет", -7829368))
+            eventsDispatcher.dispatchEvent { showPriorities(priorities) }
+        }
     }
 }

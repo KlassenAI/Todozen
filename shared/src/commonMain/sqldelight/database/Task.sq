@@ -1,25 +1,41 @@
+CREATE TABLE PriorityEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    type TEXT NOT NULL UNIQUE,
+    color INTEGER NOT NULL
+);
+
+INSERT INTO PriorityEntity VALUES
+(1, "Высокий", -65536),
+(2, "Средний", -256),
+(3, "Низкий", -16776961);
+
+getPriorities:
+SELECT * FROM PriorityEntity;
+
 CREATE TABLE TaskEntity(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    title TEXT NOT NULL,
-    isDone INTEGER AS Boolean DEFAULT 0 NOT NULL,
     date INTEGER,
     time INTEGER,
+    title TEXT NOT NULL,
     created INTEGER NOT NULL,
     updated INTEGER NOT NULL,
-    listId INTEGER,
+    isDone INTEGER AS Boolean DEFAULT 0 NOT NULL,
     isInMyDay INTEGER AS Boolean DEFAULT 0 NOT NULL,
     isDeleted INTEGER AS Boolean DEFAULT 0 NOT NULL,
     isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
-    FOREIGN KEY (listId) REFERENCES TaskListEntity(id) ON DELETE CASCADE
+    listId INTEGER,
+    priorityId INTEGER,
+    FOREIGN KEY (listId) REFERENCES TaskListEntity(id),
+    FOREIGN KEY (priorityId) REFERENCES PriorityEntity(id)
 );
 
 insertTask:
 INSERT INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?,?,?,?);
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateTask:
 REPLACE INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?,?,?,?);
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
 
 deleteTask:
 DELETE FROM TaskEntity
@@ -27,38 +43,38 @@ WHERE id = ?;
 
 getTask:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE TaskEntity.id = ?;
 
 getTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE listId = ? AND isDeleted = ?;
 
 getTasksForToday:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE (isInMyDay = ? OR date = ?) AND isDeleted = ?;
 
 getFavoriteTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE TaskEntity.isFavorite = ? AND isDeleted = ?;
 
 getDeletedTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE isDeleted = ?;
 
 getAllTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity
-ON TaskEntity.listId == TaskListEntity.id;
+LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id;
 
 CREATE TABLE TaskListEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,

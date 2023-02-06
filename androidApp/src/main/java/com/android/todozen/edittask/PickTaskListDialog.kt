@@ -10,6 +10,7 @@ import com.android.todozen.R
 import com.android.todozen.databinding.DialogPickTaskListBinding
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.BaseAdapterDelegate
+import com.android.todozen.core.adapter
 import com.android.todozen.core.initVertical
 import com.android.todozen.core.listDelegate
 import com.android.todozen.menu.MenuState
@@ -26,12 +27,10 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     private var state = MenuState()
     private var adapter: BaseAdapterDelegate? = null
 
-    private fun getAdapter(currentTaskListId: Long?) = BaseAdapterDelegate(
-        listDelegate(currentTaskListId, ::clickItem)
-    )
+    private fun getAdapter() = adapter(listDelegate(::clickItem))
 
     private fun clickItem(taskList: TaskList) {
-        editTaskViewModel.updateTaskList(taskList.id, taskList.title)
+        editTaskViewModel.updateTaskList(taskList)
         dismiss()
     }
 
@@ -43,8 +42,7 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     }
 
     private fun initViews() {
-        val taskListId = arguments?.getLongArray(TASK_LIST_ID)?.firstOrNull()
-        adapter = getAdapter(taskListId)
+        adapter = getAdapter()
         binding.recycler.initVertical(adapter!!)
     }
 
@@ -61,16 +59,7 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     }
 
     companion object {
-
-        const val TASK_LIST_ID = "taskListId"
-
-        fun getInstance(
-            taskListId: Long? = null
-        ) = PickTaskListDialog().apply {
-            val bundle = bundleOf()
-            taskListId?.let { bundle.putLongArray(TASK_LIST_ID, longArrayOf(taskListId)) }
-            arguments = bundle
-        }
+        fun getInstance() = PickTaskListDialog()
     }
 
     override fun onCreateView(

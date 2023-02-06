@@ -1,5 +1,6 @@
 package com.android.todozen.core
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.controller) as NavHostFragment
         navController = navHostFragment.navController
+
+        val color = Color.RED
     }
 
     override fun onSupportNavigateUp(): Boolean {

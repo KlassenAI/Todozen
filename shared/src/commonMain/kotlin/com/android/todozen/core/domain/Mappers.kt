@@ -3,116 +3,114 @@ package com.android.todozen.core.domain
 import database.*
 import kotlinx.datetime.*
 
-fun TaskEntity.map() = Task(
-    id = id,
-    title = title,
-    isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = listId,
-    listTitle = "",
-    listColor = null,
-    isInMyDay = isInMyDay,
-    isDeleted = isDeleted,
-    isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
-)
+//fun TaskEntity.map() = Task(
+//    id = id,
+//    title = title,
+//    isDone = isDone,
+//    date = date?.toLocalDate(),
+//    time = time?.toLocalTime(),
+//    created = created.toLocalDateTime(),
+//    list = TaskList(listId, "", null)
+//    listId = listId,
+//    listTitle = "",
+//    listColor = null,
+//    isInMyDay = isInMyDay,
+//    isDeleted = isDeleted,
+//    isFavorite = isFavorite,
+//    updated = updated.toLocalDateTime(),
+//    priorityId = priorityId,
+//    priorityType = "",
+//    priorityColor = null
+//)
 
 fun GetTask.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun GetTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun GetTasksForToday.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun GetAllTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun GetFavoriteTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun GetDeletedTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
-    date = date?.toLocalDate(),
-    time = time?.toLocalTime(),
-    created = created.toLocalDateTime(),
-    listId = id_,
-    listTitle = title_.orEmpty(),
-    listColor = color?.toInt(),
     isInMyDay = isInMyDay,
     isDeleted = isDeleted,
     isFavorite = isFavorite,
-    updated = updated.toLocalDateTime()
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(id__, type, color_?.toInt())
 )
 
 fun TaskListEntity.map() = TaskList(
@@ -121,6 +119,12 @@ fun TaskListEntity.map() = TaskList(
     isFavorite = isFavorite,
     color = color?.toInt(),
     position = position
+)
+
+fun PriorityEntity.map() = Priority(
+    id = id,
+    type = type,
+    color = color.toInt(),
 )
 
 fun LocalDateTime.toLong(): Long =

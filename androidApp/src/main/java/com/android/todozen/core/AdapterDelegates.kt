@@ -26,10 +26,10 @@ fun taskDelegate(
     binding.btnDone.setOnClickListener { checkListener.invoke(item) }
     binding.btnDelete.setOnClickListener { deleteListener.invoke(item) }
     bind { payloads ->
-        binding.ivListColor.setBackgroundColor(item.listColor ?: getColor(R.color.transparent))
+        binding.ivListColor.setBackgroundColor(item.list.color ?: getColor(R.color.transparent))
         binding.tvTitle.text = item.title
         binding.tvDate.init(formatDateTime(item.date, item.time)) { text = it }
-        binding.tvList.init(item.listId) { text = item.listTitle }
+        binding.tvList.init(item.list.id) { text = item.list.title }
         binding.btnDone.isChecked = item.isDone
     }
 }
@@ -49,7 +49,6 @@ fun listDelegate(
 }
 
 fun listDelegate(
-    currentTaskListId: Long?,
     clickListener: (TaskList) -> Unit,
 ) = adapterDelegateViewBinding<TaskList, ListItem, ItemTaskList2Binding>(
     { inflater, root -> ItemTaskList2Binding.inflate(inflater, root, false) },

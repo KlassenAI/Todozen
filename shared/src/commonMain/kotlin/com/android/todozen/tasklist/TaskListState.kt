@@ -13,7 +13,7 @@ data class TaskListState(
     val currentTasks: List<Task> get() = tasks.filter { it.isDone.not() && it.date?.isOutdated()?.not() ?: true }
     val doneTasks: List<Task> get() = tasks.filter { it.isDone }
 
-    fun getTasksByList(listId: Long): List<Task> = tasks.filter { it.listId == listId }
+    fun getTasksByList(listId: Long): List<Task> = tasks.filter { it.list.id == listId }
 
     private fun LocalDate.isOutdated(): Boolean = this < DateTimeUtil.today()
 }
