@@ -8,6 +8,10 @@ object DateTimeUtil {
 
     fun today(): LocalDate = now().date
 
+    fun tomorrow(): LocalDate = now().date.plus(1, DateTimeUnit.DAY)
+
+    fun next(plus: Int): LocalDate = now().date.plus(plus, DateTimeUnit.DAY)
+
     fun formatDateTime(date: LocalDate?, time: LocalTime?): String? {
         if (date == null) return null
         val stringBuilder = StringBuilder(formatDateOrEmpty(date))

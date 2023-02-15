@@ -1,38 +1,46 @@
 package com.android.todozen.menu
 
-import com.android.todozen.core.data.TaskListDataSource
-import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.data.ListDataSource
+import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.presentation.BaseViewModel
 
 class MenuViewModel(
-    private val taskListDS: TaskListDataSource
+    private val listDS: ListDataSource
 ) : BaseViewModel<MenuState>() {
 
     override fun initialState() = MenuState()
 
     init {
-        loadTaskLists()
+        loadInternalLists()
+        loadEditableLists()
     }
 
-    fun loadTaskLists() {
+    private fun loadInternalLists() {
         action {
-            val taskLists = taskListDS.getTaskLists()
-            state { copy(taskLists = taskLists) }
+            val lists = listDS.getInternalLists()
+            state { copy(internalLists = lists) }
         }
     }
 
-    fun deleteTaskList(taskList: TaskList) {
+    fun loadEditableLists() {
         action {
-            taskListDS.deleteTaskList(taskList)
-            loadTaskLists()
+            val taskLists = listDS.getEditableLists()
+            state { copy(editableLists = taskLists) }
+        }
+    }
+
+    fun deleteTaskList(taskList: EditableList) {
+        action {
+            listDS.deleteEditableList(taskList)
+            loadEditableLists()
         }
     }
 
     fun swapTaskLists(from: Int, to: Int) {
-        val taskLists = state.value.taskLists
+        val taskLists = state.value.editableLists
         val first = taskLists.first { it.position == from.toLong() }
         val second = taskLists.first { it.position == to.toLong() }
         first.position = second.position.also { second.position = first.position }
-        action { taskListDS.updateTaskLists(taskLists) }
+        action { listDS.updateEditableLists(taskLists) }
     }
 }

@@ -1,11 +1,11 @@
 package com.android.todozen.edittasklist
 
-import com.android.todozen.core.data.TaskListDataSource
-import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.data.ListDataSource
+import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.presentation.BaseViewModel
 
 class EditTaskListViewModel(
-    private val taskDS: TaskListDataSource
+    private val taskDS: ListDataSource
 ) : BaseViewModel<EditTaskListState>() {
 
     override fun initialState() = EditTaskListState()
@@ -23,11 +23,11 @@ class EditTaskListViewModel(
 
     fun loadTaskList(taskListId: Long?) {
         action {
-            val taskList: TaskList
+            val taskList: EditableList
             if (taskListId == null) {
-                taskList = TaskList(position = taskDS.getTaskListsCount())
+                taskList = EditableList(position = taskDS.getEditableListsCount())
             } else {
-                taskList = taskDS.getTaskList(taskListId)
+                taskList = taskDS.getEditableList(taskListId)
             }
             state { copy(id = taskListId, taskList = taskList) }
         }
@@ -36,9 +36,9 @@ class EditTaskListViewModel(
     fun editTaskList() {
         action {
             if (_state.value.id == null) {
-                taskDS.insertTaskList(_state.value.taskList)
+                taskDS.insertEditableList(_state.value.taskList)
             } else {
-                taskDS.updateTaskList(_state.value.taskList)
+                taskDS.updateEditableList(_state.value.taskList)
             }
             clearState()
             loadTaskList(null)

@@ -1,7 +1,5 @@
 package com.android.todozen.edittasklist
 
-import android.util.Log
-import androidx.appcompat.view.menu.MenuView
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -34,7 +32,7 @@ class EditTaskListDialog private constructor() :
         etTitle.addTextChangedListener { viewModel.updateTitle(it.toString()) }
         etTitle.setActionDoneListener {
             viewModel.editTaskList();
-            menuViewModel.loadTaskLists()
+            menuViewModel.loadEditableLists()
         }
         containerFavorite.setOnClickListener { viewModel.updateFavorite() }
         containerColor.setOnClickListener {
@@ -50,7 +48,7 @@ class EditTaskListDialog private constructor() :
         containerColor.setOnLongClickListener { viewModel.clearColor(); true }
         btnEdit.setOnClickListener {
             viewModel.editTaskList()
-            menuViewModel.loadTaskLists()
+            menuViewModel.loadEditableLists()
             dismiss()
         }
     }

@@ -3,10 +3,25 @@ plugins {
     id("com.android.library")
     id("com.squareup.sqldelight")
     id("kotlin-parcelize")
+    id("dev.icerock.mobile.multiplatform-resources")
+}
+
+dependencies {
+    commonMainApi("dev.icerock.moko:resources:0.20.1")
+    commonTestImplementation("dev.icerock.moko:resources-test:0.20.1")
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.android.todozen" // required
+    multiplatformResourcesClassName = "SharedRes" // optional, default MR
+    iosBaseLocalizationRegion = "ru" // optional, default "en"
+    multiplatformResourcesSourceSet = "commonMain"  // optional, default "commonMain"
 }
 
 kotlin {
     android()
+
+
 
     val moko = "0.15.0"
     val sqldelight = "1.5.3"

@@ -24,7 +24,7 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             isInMyDay = task.isInMyDay,
             isDeleted = task.isDeleted,
             isFavorite = task.isFavorite,
-            priorityId = task.priority.id
+            priorityId = task.priority.type.id
         )
     }
 
@@ -41,7 +41,7 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
             isInMyDay = task.isInMyDay,
             isDeleted = task.isDeleted,
             isFavorite = task.isFavorite,
-            priorityId = task.priority.id
+            priorityId = task.priority.type.id
         )
     }
 
@@ -58,22 +58,38 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
     }
 
     override fun getTasks(listId: Long?): Flow<List<Task>> {
-        return queries.getTasks(listId, false).asFlow().mapToList().map { it.map { it.map() } }
+        return queries.getTasks(listId).asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getMyDayTasks(): Flow<List<Task>> {
+        return queries.getMyDayTasks(DateTimeUtil.today().toLong()).asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getTomorrowTasks(): Flow<List<Task>> {
+        return queries.getTomorrowTasks(DateTimeUtil.tomorrow().toLong()).asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getNextWeekTasks(): Flow<List<Task>> {
+        return queries.getNextWeekTasks(DateTimeUtil.tomorrow().toLong(), DateTimeUtil.next(7).toLong()).asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getIncomingTasks(): Flow<List<Task>> {
+        return queries.getTasks(null).asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getFavoriteTasks(): Flow<List<Task>> {
+        return queries.getFavoriteTasks().asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getDoneTasks(): Flow<List<Task>> {
+        return queries.getDoneTasks().asFlow().mapToList().map { it.map { it.map() } }
+    }
+
+    override fun getDeletedTasks(): Flow<List<Task>> {
+        return queries.getDeletedTasks().asFlow().mapToList().map { it.map { it.map() } }
     }
 
     override fun getAllTasks(): Flow<List<Task>> {
         return queries.getAllTasks().asFlow().mapToList().map { it.map { it.map() } }
-    }
-
-    override fun getTasksForToday(): Flow<List<Task>> {
-        return queries.getTasksForToday(true, DateTimeUtil.today().toLong(), false).asFlow().mapToList().map { it.map { it.map() } }
-    }
-
-    override fun getFavoriteTasks(): Flow<List<Task>> {
-        return queries.getFavoriteTasks(isFavorite = true, isDeleted = false).asFlow().mapToList().map { it.map { it.map() } }
-    }
-
-    override fun getDeletedTasks(): Flow<List<Task>> {
-        return queries.getDeletedTasks(true).asFlow().mapToList().map { it.map { it.map() } }
     }
 }

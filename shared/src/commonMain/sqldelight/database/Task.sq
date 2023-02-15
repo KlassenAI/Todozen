@@ -1,16 +1,98 @@
+
+CREATE TABLE SortEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    name TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO SortEntity VALUES
+(1, "title"),
+(2, "date"),
+(3, "list"),
+(4, "priority"),
+(5, "label"),
+(6, "arbitrary");
+
 CREATE TABLE PriorityEntity(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    type TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL UNIQUE,
     color INTEGER NOT NULL
 );
 
 INSERT INTO PriorityEntity VALUES
-(1, "Высокий", -65536),
-(2, "Средний", -256),
-(3, "Низкий", -16776961);
+(1, "high", -65536),
+(2, "medium", -256),
+(3, "low", -16776961),
+(4, "no", -7829368);
 
 getPriorities:
 SELECT * FROM PriorityEntity;
+
+CREATE TABLE InternalListEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    title TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    sortId INTEGER NOT NULL,
+    FOREIGN KEY (sortId) REFERENCES SortEntity(id)
+);
+
+INSERT INTO InternalListEntity VALUES
+(1, "all", 1, 1),
+(2, "my_day", 2, 1),
+(3, "tomorrow", 3, 1),
+(4, "next_week", 4, 1),
+(5, "incoming", 5, 1),
+(6, "favorite", 6, 1),
+(7, "done", 7, 1),
+(8, "deleted", 8, 1);
+
+getInternalLists:
+SELECT * FROM InternalListEntity;
+
+getMyDayList:
+SELECT * FROM InternalListEntity
+WHERE id = ?;
+
+updateInternalList:
+REPLACE INTO InternalListEntity
+VALUES (?,?,?,?);
+
+CREATE TABLE EditableListEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    title TEXT NOT NULL,
+    isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    color INTEGER,
+    position INTEGER NOT NULL,
+    sortId INTEGER NOT NULL,
+    FOREIGN KEY (sortId) REFERENCES SortEntity(id)
+);
+
+insertEditableList:
+INSERT INTO EditableListEntity
+VALUES (?,?,?,?,?,?);
+
+updateEditableList:
+REPLACE INTO EditableListEntity
+VALUES (?,?,?,?,?,?);
+
+deleteEditableList:
+DELETE FROM EditableListEntity
+WHERE id = ?;
+
+reduceEditableListPositions:
+UPDATE EditableListEntity
+SET position = position - 1
+WHERE position > ?;
+
+getEditableList:
+SELECT * FROM EditableListEntity
+WHERE EditableListEntity.id = ?;
+
+getAllEditableLists:
+SELECT * FROM EditableListEntity
+ORDER BY position ASC;
+
+getEditableListsCount:
+SELECT COUNT(*) FROM EditableListEntity;
 
 CREATE TABLE TaskEntity(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -24,8 +106,8 @@ CREATE TABLE TaskEntity(
     isDeleted INTEGER AS Boolean DEFAULT 0 NOT NULL,
     isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
     listId INTEGER,
-    priorityId INTEGER,
-    FOREIGN KEY (listId) REFERENCES TaskListEntity(id),
+    priorityId INTEGER NOT NULL,
+    FOREIGN KEY (listId) REFERENCES EditableListEntity(id),
     FOREIGN KEY (priorityId) REFERENCES PriorityEntity(id)
 );
 
@@ -43,71 +125,102 @@ WHERE id = ?;
 
 getTask:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE TaskEntity.id = ?;
 
 getTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
-WHERE listId = ? AND isDeleted = ?;
+WHERE listId = ? AND isDeleted = FALSE;
 
-getTasksForToday:
-SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+getCountTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
-WHERE (isInMyDay = ? OR date = ?) AND isDeleted = ?;
+WHERE listId = ? AND isDeleted = FALSE;
+
+getMyDayTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE (isInMyDay = TRUE OR date = ?) AND isDeleted = FALSE;
+
+getCountMyDayTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE (isInMyDay = TRUE OR date = ?) AND isDeleted = FALSE;
+
+getTomorrowTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE date = ? AND isDeleted = FALSE;
+
+getCountTomorrowTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE date = ? AND isDeleted = FALSE;
+
+getNextWeekTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE date >= ? AND date <= ? AND isDeleted = FALSE;
+
+getCountNextWeekTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE date >= ? AND date <= ? AND isDeleted = FALSE;
 
 getFavoriteTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
-WHERE TaskEntity.isFavorite = ? AND isDeleted = ?;
+WHERE TaskEntity.isFavorite = TRUE AND isDeleted = FALSE;
+
+getCountFavoriteTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE TaskEntity.isFavorite = TRUE AND isDeleted = FALSE;
 
 getDeletedTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
-WHERE isDeleted = ?;
+WHERE isDeleted = TRUE;
+
+getCountDeletedTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE isDeleted = TRUE;
+
+getDoneTasks:
+SELECT * FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE isDone = TRUE AND isDeleted = FALSE;
+
+getCountDoneTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE isDone = TRUE AND isDeleted = FALSE;
 
 getAllTasks:
 SELECT * FROM TaskEntity
-LEFT OUTER JOIN TaskListEntity ON TaskEntity.listId == TaskListEntity.id
-LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id;
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE isDeleted = FALSE;
 
-CREATE TABLE TaskListEntity (
-    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    title TEXT NOT NULL,
-    isFavorite INTEGER AS Boolean DEFAULT 0 NOT NULL,
-    color INTEGER,
-    position INTEGER NOT NULL
-);
-
-insertTaskList:
-INSERT INTO TaskListEntity
-VALUES (?,?,?,?,?);
-
-updateTaskList:
-REPLACE INTO TaskListEntity
-VALUES (?,?,?,?,?);
-
-deleteTaskList:
-DELETE FROM TaskListEntity
-WHERE id = ?;
-
-reduceTaskListPositions:
-UPDATE TaskListEntity
-SET position = position - 1
-WHERE position > ?;
-
-getTaskList:
-SELECT * FROM TaskListEntity
-WHERE id = ?;
-
-getAllTaskLists:
-SELECT * FROM TaskListEntity
-ORDER BY position ASC;
-
-getTaskListsCount:
-SELECT COUNT(*) FROM TaskListEntity;
+getCountAllTasks:
+SELECT COUNT(*) FROM TaskEntity
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE isDeleted = FALSE;

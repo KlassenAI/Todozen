@@ -1,27 +1,8 @@
 package com.android.todozen.core.domain
 
 import database.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.*
-
-//fun TaskEntity.map() = Task(
-//    id = id,
-//    title = title,
-//    isDone = isDone,
-//    date = date?.toLocalDate(),
-//    time = time?.toLocalTime(),
-//    created = created.toLocalDateTime(),
-//    list = TaskList(listId, "", null)
-//    listId = listId,
-//    listTitle = "",
-//    listColor = null,
-//    isInMyDay = isInMyDay,
-//    isDeleted = isDeleted,
-//    isFavorite = isFavorite,
-//    updated = updated.toLocalDateTime(),
-//    priorityId = priorityId,
-//    priorityType = "",
-//    priorityColor = null
-//)
 
 fun GetTask.map() = Task(
     id = id,
@@ -34,8 +15,8 @@ fun GetTask.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
 fun GetTasks.map() = Task(
@@ -49,11 +30,11 @@ fun GetTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
-fun GetTasksForToday.map() = Task(
+fun GetMyDayTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
@@ -64,11 +45,11 @@ fun GetTasksForToday.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
-fun GetAllTasks.map() = Task(
+fun GetTomorrowTasks.map() = Task(
     id = id,
     title = title,
     isDone = isDone,
@@ -79,8 +60,23 @@ fun GetAllTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
+)
+
+fun GetNextWeekTasks.map() = Task(
+    id = id,
+    title = title,
+    isDone = isDone,
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
 fun GetFavoriteTasks.map() = Task(
@@ -94,8 +90,23 @@ fun GetFavoriteTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
+)
+
+fun GetDoneTasks.map() = Task(
+    id = id,
+    title = title,
+    isDone = isDone,
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
 fun GetDeletedTasks.map() = Task(
@@ -109,23 +120,51 @@ fun GetDeletedTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = TaskList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
-    priority = Priority(id__, type, color_?.toInt())
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
-fun TaskListEntity.map() = TaskList(
+fun GetAllTasks.map() = Task(
+    id = id,
+    title = title,
+    isDone = isDone,
+    isInMyDay = isInMyDay,
+    isDeleted = isDeleted,
+    isFavorite = isFavorite,
+    date = date?.toLocalDate(),
+    time = time?.toLocalTime(),
+    created = created.toLocalDateTime(),
+    updated = updated.toLocalDateTime(),
+    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    priority = Priority(name.toPriorityType(), color_!!.toInt())
+)
+
+
+
+fun EditableListEntity.map() = EditableList(
     id = id,
     title = title,
     isFavorite = isFavorite,
     color = color?.toInt(),
-    position = position
+    position = position,
+    sort = Sort.getById(sortId)
+)
+
+fun InternalListEntity.map() = InternalList(
+    type = InternalListType.getById(id),
+    position = position.toInt(),
+    sort = Sort.getById(sortId),
+    taskCount = 0
 )
 
 fun PriorityEntity.map() = Priority(
-    id = id,
-    type = type,
+    type = name.toPriorityType(),
     color = color.toInt(),
 )
+
+fun String?.toPriorityType(): PriorityType {
+    return this?.let { PriorityType.valueOf(this.uppercase()) } ?: PriorityType.DEFAULT
+}
 
 fun LocalDateTime.toLong(): Long =
     this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
@@ -140,3 +179,5 @@ fun Long.toLocalDate(): LocalDate = LocalDate.fromEpochDays(this.toInt())
 fun LocalTime.toLong(): Long = toNanosecondOfDay()
 
 fun Long.toLocalTime(): LocalTime = LocalTime.fromNanosecondOfDay(this)
+
+fun Long.toPriorityType(): PriorityType = PriorityType.values().first { it.id == this }

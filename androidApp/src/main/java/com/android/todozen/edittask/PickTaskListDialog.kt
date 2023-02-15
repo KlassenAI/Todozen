@@ -4,15 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.databinding.DialogPickTaskListBinding
-import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.BaseAdapterDelegate
 import com.android.todozen.core.adapter
 import com.android.todozen.core.initVertical
-import com.android.todozen.core.listDelegate
+import com.android.todozen.core.editableListDelegate
 import com.android.todozen.menu.MenuState
 import com.android.todozen.menu.MenuViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,9 +26,9 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     private var state = MenuState()
     private var adapter: BaseAdapterDelegate? = null
 
-    private fun getAdapter() = adapter(listDelegate(::clickItem))
+    private fun getAdapter() = adapter(editableListDelegate(::clickItem))
 
-    private fun clickItem(taskList: TaskList) {
+    private fun clickItem(taskList: EditableList) {
         editTaskViewModel.updateTaskList(taskList)
         dismiss()
     }
@@ -49,7 +48,7 @@ class PickTaskListDialog private constructor() : BottomSheetDialogFragment() {
     private fun initObservers() {
         menuViewModel.state.bindNotNull(viewLifecycleOwner) {
             this.state = it
-            adapter?.items = it.taskLists
+            adapter?.items = it.editableLists
         }
     }
 

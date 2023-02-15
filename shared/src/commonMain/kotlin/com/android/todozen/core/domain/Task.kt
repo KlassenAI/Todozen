@@ -15,7 +15,7 @@ data class Task(
     var isFavorite: Boolean = false,
     val created: LocalDateTime = DateTimeUtil.now(),
     var updated: LocalDateTime = DateTimeUtil.now(),
-    var list: TaskList = TaskList(),
+    var list: EditableList = EditableList(),
     var priority: Priority = Priority(),
 ) : ListItem {
     override fun getUuid() = id

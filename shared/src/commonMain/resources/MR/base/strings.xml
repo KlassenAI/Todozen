@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // Dictionary
+    <string name="sort">Sort</string>
+
+    // Dialogs
+    <string name="add_time">+ Add Time</string>
+    <string name="select_color">Select Color</string>
+
+    // Priority
+    <string name="priority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_default">No</string>
+
+    // Tasks
+    <string name="tasks_all">All</string>
+    <string name="tasks_my_day">My Day</string>
+    <string name="tasks_tomorrow">Tomorrow</string>
+    <string name="tasks_next_week">Next Week</string>
+    <string name="tasks_incoming">Incoming</string>
+    <string name="tasks_favorite">Favorite</string>
+    <string name="tasks_done">Done</string>
+    <string name="tasks_deleted">Basket</string>
+
+    <string name="tasks_current">Current</string>
+    <string name="tasks_overdue">Overdue</string>
+
+</resources>

@@ -1,16 +1,20 @@
 package com.android.todozen.tasklist
 
 import com.android.todozen.core.data.TaskDataSource
-import com.android.todozen.core.domain.DateTimeUtil
-import com.android.todozen.core.domain.Task
+import com.android.todozen.core.data.ListDataSource
+import com.android.todozen.core.domain.*
+import com.android.todozen.core.domain.InternalListType.*
 import com.android.todozen.core.presentation.BaseViewModel
+import com.android.todozen.edittasklist.EditTaskListListener
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.cancellable
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.daysUntil
+import kotlinx.coroutines.runBlocking
 
 class TaskListViewModel(
-    private val taskDS: TaskDataSource
+    private val taskDS: TaskDataSource,
+    private val listDS: ListDataSource,
+    val eventsDispatcher: EventsDispatcher<EditTaskListListener>
 ) : BaseViewModel<TaskListState>() {
 
     override fun initialState() = TaskListState()
@@ -18,32 +22,63 @@ class TaskListViewModel(
     private var job: Job? = null
 
     init {
-        loadAllTasks()
+        action {
+            val list = listDS.getMyDayList()
+            loadListTasks(list)
+        }
     }
 
-    fun loadAllTasks() {
-        job?.cancel()
-        job = action { taskDS.getAllTasks().cancellable().collect { updateTasks(it) } }
+    fun loadListTasks(list: TaskList) {
+        when (list) {
+            is EditableList -> loadEditableListTasks(list)
+            is InternalList -> loadInternalListTasks(list)
+        }
     }
 
-    fun loadTasksForToday() {
+    fun loadEditableListTasks(list: EditableList) {
         job?.cancel()
-        job = action { taskDS.getTasksForToday().cancellable().collect { updateTasks(it) } }
+        job = action {
+            taskDS.getTasks(list.id).cancellable()
+                .collect { state { copy(list = list, tasks = it) } }
+        }
     }
 
-    fun loadTasks(id: Long?) {
+    fun loadInternalListTasks(list: InternalList) {
         job?.cancel()
-        job = action { taskDS.getTasks(id).cancellable().collect { updateTasks(it) } }
-    }
-
-    fun loadFavoriteTasks() {
-        job?.cancel()
-        job = action { taskDS.getFavoriteTasks().cancellable().collect { updateTasks(it) } }
-    }
-
-    fun loadDeletedTasks() {
-        job?.cancel()
-        job = action { taskDS.getDeletedTasks().cancellable().collect { updateTasks(it) } }
+        job = when (list.type) {
+            ALL -> action {
+                taskDS.getAllTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            MY_DAY -> action {
+                taskDS.getMyDayTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            TOMORROW -> action {
+                taskDS.getAllTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            NEXT_WEEK -> action {
+                taskDS.getAllTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            INCOMING -> action {
+                taskDS.getAllTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            FAVORITE -> action {
+                taskDS.getFavoriteTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            DONE -> action {
+                taskDS.getAllTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+            DELETED -> action {
+                taskDS.getDeletedTasks().cancellable()
+                    .collect { state { copy(list = list, tasks = it) } }
+            }
+        }
     }
 
     fun checkTask(task: Task) {
@@ -60,5 +95,18 @@ class TaskListViewModel(
         }
     }
 
-    private fun updateTasks(tasks: List<Task>) = state { copy(tasks = tasks) }
+    fun showSorts() {
+        eventsDispatcher.dispatchEvent { showSorts(Sort.values().toList()) }
+    }
+
+    fun updateSort(sort: Sort) {
+        action {
+            val list = state.value.list.apply { this?.sort = sort }
+            when (list) {
+                is EditableList -> listDS.updateEditableList(list)
+                is InternalList -> listDS.updateInternalList(list)
+            }
+            state { copy(list = list) }
+        }
+    }
 }

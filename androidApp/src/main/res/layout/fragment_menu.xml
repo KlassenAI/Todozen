@@ -13,35 +13,27 @@
             android:id="@+id/llContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingBottom="80dp"
             android:orientation="vertical">
 
-            <include
-                android:id="@+id/containerAllTasks"
-                layout="@layout/item_task_list_2" />
-
-            <include
-                android:id="@+id/containerTodayTasks"
-                layout="@layout/item_task_list_2" />
-
-            <include
-                android:id="@+id/containerIncomingTasks"
-                layout="@layout/item_task_list_2" />
-
-            <include
-                android:id="@+id/containerFavoriteTasks"
-                layout="@layout/item_task_list_2" />
-
-            <include
-                android:id="@+id/containerDeletedTasks"
-                layout="@layout/item_task_list_2" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvInternalLists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingTop="4dp"
+                android:paddingHorizontal="4dp"
+                android:overScrollMode="never"
+                tools:listitem="@layout/item_task_list_2" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTaskLists"
-                android:layout_weight="1"
+                android:id="@+id/rvEditableLists"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:padding="4dp"
+                android:paddingBottom="4dp"
+                android:paddingHorizontal="4dp"
+                android:overScrollMode="never"
                 tools:listitem="@layout/item_task_list" />
 
         </LinearLayout>
@@ -52,6 +44,8 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="ContentDescription" />

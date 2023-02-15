@@ -2,9 +2,8 @@ package com.android.todozen.edittask
 
 import com.android.todozen.core.domain.Task
 import com.android.todozen.core.data.TaskDataSource
-import com.android.todozen.core.data.TaskListDataSource
 import com.android.todozen.core.domain.Priority
-import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.presentation.BaseViewModel
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.datetime.LocalDate
@@ -26,7 +25,7 @@ class EditTaskViewModel(
         state { copy(task = task.apply { this.date = date; this.time = time }) }
     }
 
-    fun updateTaskList(taskList: TaskList) {
+    fun updateTaskList(taskList: EditableList) {
         state { copy(task = task.apply { this.list = taskList }) }
     }
 
@@ -58,8 +57,7 @@ class EditTaskViewModel(
 
     fun showPriorities() {
         action {
-            val priorities = taskDS.getPriorities().toMutableList()
-            priorities.add(Priority(null, "Нет", -7829368))
+            val priorities = taskDS.getPriorities()
             eventsDispatcher.dispatchEvent { showPriorities(priorities) }
         }
     }

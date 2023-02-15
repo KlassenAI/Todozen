@@ -20,6 +20,7 @@ import com.android.todozen.core.setActionDoneListener
 import com.android.todozen.core.showDialog
 import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
+import com.android.todozen.expect.getName
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
@@ -86,8 +87,7 @@ class EditTaskDialog private constructor() :
     }
 
     override fun showPriorities(priorities: List<Priority>) {
-        Log.d("aboba", priorities.toString())
-        val items = priorities.map { PowerMenuItem(title = it.type, icon = getDrawable(it)) }
+        val items = priorities.map { PowerMenuItem(title = it.type.getName(), icon = getDrawable(it)) }
         val powerMenu = PowerMenu.Builder(requireContext())
             .addItemList(items)
             .setHeight(500)
@@ -101,11 +101,13 @@ class EditTaskDialog private constructor() :
     }
 
     private fun getDrawable(priority: Priority): Drawable {
-        val resId = priority.id?.let { R.drawable.ic_priority_selected_24 }
-            ?: R.drawable.ic_priority_deselected_24
+        val resId = if (priority.type.id == 4L) {
+            R.drawable.ic_priority_deselected_24
+        } else {
+            R.drawable.ic_priority_selected_24
+        }
         val drawable = ContextCompat.getDrawable(requireContext(), resId)!!
-        val wrapped = DrawableCompat.wrap(drawable)
-        DrawableCompat.setTint(wrapped, priority.color ?: -7829368)
+        DrawableCompat.setTint(DrawableCompat.wrap(drawable), priority.color)
         return drawable
     }
 }

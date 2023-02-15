@@ -1,4 +1,4 @@
-package com.android.todozen.driver
+package com.android.todozen.expect
 
 import com.android.todozen.TaskDatabase
 import com.squareup.sqldelight.db.SqlDriver
