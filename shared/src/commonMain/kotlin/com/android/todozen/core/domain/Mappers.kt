@@ -15,7 +15,7 @@ fun GetTask.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -30,7 +30,7 @@ fun GetTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -45,7 +45,7 @@ fun GetMyDayTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -60,7 +60,7 @@ fun GetTomorrowTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -75,7 +75,7 @@ fun GetNextWeekTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -90,7 +90,7 @@ fun GetFavoriteTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -105,7 +105,7 @@ fun GetDoneTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -120,7 +120,7 @@ fun GetDeletedTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 
@@ -135,7 +135,7 @@ fun GetAllTasks.map() = Task(
     time = time?.toLocalTime(),
     created = created.toLocalDateTime(),
     updated = updated.toLocalDateTime(),
-    list = EditableList(id_, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0),
+    list = listId?.let { EditableList(id_ ?: 0, title_.orEmpty(), isFavorite_ ?: false, color?.toInt(), position ?: 0) },
     priority = Priority(name.toPriorityType(), color_!!.toInt())
 )
 

@@ -4,6 +4,7 @@ import com.android.todozen.core.domain.Task
 import com.android.todozen.core.data.TaskDataSource
 import com.android.todozen.core.domain.Priority
 import com.android.todozen.core.domain.EditableList
+import com.android.todozen.core.domain.TaskList
 import com.android.todozen.core.presentation.BaseViewModel
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.datetime.LocalDate
@@ -26,7 +27,7 @@ class EditTaskViewModel(
     }
 
     fun updateTaskList(taskList: EditableList) {
-        state { copy(task = task.apply { this.list = taskList }) }
+        state { copy(task = task.apply { this.list = taskList }, isListPicked = true) }
     }
 
     fun updateInMyDay() = state { copy(task = task.apply { isInMyDay = isInMyDay.not() }) }
@@ -37,19 +38,23 @@ class EditTaskViewModel(
         state { copy(task = task.apply { this.priority = priority }) }
     }
 
+    fun updateList(list: TaskList) = state { copy(list = list) }
+
     fun loadTask(taskId: Long?) {
         action {
             val task = taskId?.let { taskDS.getTask(it) } ?: Task()
-            state { copy(id = task.id, task = task) }
+            state { copy(id = task.id, task = task, isListPicked = taskId != null) }
         }
     }
 
-    fun editTask(state: EditTaskState) {
+    fun editTask() {
+        val state = state.value
+        val task = state.task.apply { list = state.trueList }
         action {
             if (state.id == null) {
-                taskDS.insertTask(state.task)
+                taskDS.insertTask(task)
             } else {
-                taskDS.updateTask(state.task)
+                taskDS.updateTask(task)
             }
         }
         clearState()

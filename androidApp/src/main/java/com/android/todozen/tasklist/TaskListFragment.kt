@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -19,19 +18,20 @@ import com.android.todozen.core.domain.Sort.*
 import com.android.todozen.core.domain.Task
 import com.android.todozen.databinding.FragmentTaskListBinding
 import com.android.todozen.edittask.EditTaskDialog
+import com.android.todozen.edittask.EditTaskViewModel
 import com.android.todozen.edittasklist.EditTaskListListener
 import com.android.todozen.expect.getName
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import com.android.todozen.expect.getString
 import dev.icerock.moko.mvvm.utils.bindNotNull
-import dev.icerock.moko.resources.desc.Resource
-import dev.icerock.moko.resources.desc.StringDesc
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListListener {
 
     private val binding by viewBinding<FragmentTaskListBinding>()
     private val viewModel by sharedViewModel<TaskListViewModel>()
+    private val editTaskViewModel by sharedViewModel<EditTaskViewModel>()
     private var state = TaskListState()
 
     private fun getTaskAdapter() = adapter(taskDelegate(::clickTask, ::checkTask, ::deleteTask))
@@ -55,18 +55,16 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
         initViews()
         initObservers()
         initListeners()
-//        val str = StringDesc.Resource(SharedRes.strings.test).toString(requireContext())
-//        Toast.makeText(context, str, Toast.LENGTH_SHORT).show()
     }
 
     private fun initViews() = with(binding) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.tbContainer.toolbar)
 
-        currentTasksByTitleRecycler = llInternalContainer.createRecycler(getString(R.string.tasks_current))
-        doneTasksRecycler = llInternalContainer.createRecycler(getString(R.string.tasks_done))
+        currentTasksByTitleRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
+        doneTasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_done))
 
-        outdatedTasksRecycler = llInternalContainer.createRecycler(getString(R.string.tasks_overdue))
-        tasksRecycler = llInternalContainer.createRecycler(getString(R.string.tasks_current))
+        outdatedTasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_overdue))
+        tasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
 
         requireActivity().addMenuProvider(object : MenuProvider {
 
@@ -86,6 +84,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
     private fun initObservers() {
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this)
         viewModel.state.bindNotNull(this) {
+            state = it
 
             binding.tbContainer.toolbar.title = it.list?.title
             when (it.list?.sort) {
@@ -118,11 +117,11 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
                     tasksByListRecyclers.forEach { binding.llEditableContainer.removeView(it) }
                     tasksByListRecyclers = it.lists.map {
                         binding.llEditableContainer.createRecycler(
-                            it.title.ifEmpty { getString(R.string.tasks_incoming) }
+                            it?.title ?: getString(SharedRes.strings.tasks_incoming)
                         )
                     }
                     tasksByListRecyclers.indices.forEach { index ->
-                        tasksByListRecyclers[index].items = it.getTasksByList(it.lists[index].id)
+                        tasksByListRecyclers[index].items = it.getTasksByList(it.lists[index]?.id)
                     }
                 }
                 PRIORITY -> {
@@ -149,12 +148,15 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
             outdatedTasksRecycler!!.items = it.outdatedTasks
             tasksRecycler!!.items = it.currentTasks
             doneTasksRecycler!!.items = it.doneTasks
-            state = it
         }
     }
 
     private fun initListeners() {
-        binding.fab.setOnClickListener { showDialog(EditTaskDialog.getInstance()) }
+        binding.fab.setOnClickListener {
+            Log.d("aboba list", state.list.toString())
+            editTaskViewModel.updateList(state.list!!)
+            showDialog(EditTaskDialog.getInstance())
+        }
         binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
     }
 

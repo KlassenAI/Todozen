@@ -1,7 +1,7 @@
 package com.android.todozen.core.domain
 
 data class EditableList(
-    var id: Long? = null,
+    var id: Long = 0,
     override var title: String = "",
     var isFavorite: Boolean = false,
     var color: Int? = null,
@@ -9,7 +9,5 @@ data class EditableList(
     override var sort: Sort = Sort.DEFAULT
 ) : TaskList(), ListItem {
 
-    override fun getUuid(): Any? = id
-
-
+    override fun getUuid(): Any = id
 }

@@ -29,22 +29,21 @@ class TaskListViewModel(
     }
 
     fun loadListTasks(list: TaskList) {
+        job?.cancel()
         when (list) {
             is EditableList -> loadEditableListTasks(list)
             is InternalList -> loadInternalListTasks(list)
         }
     }
 
-    fun loadEditableListTasks(list: EditableList) {
-        job?.cancel()
+    private fun loadEditableListTasks(list: EditableList) {
         job = action {
             taskDS.getTasks(list.id).cancellable()
                 .collect { state { copy(list = list, tasks = it) } }
         }
     }
 
-    fun loadInternalListTasks(list: InternalList) {
-        job?.cancel()
+    private fun loadInternalListTasks(list: InternalList) {
         job = when (list.type) {
             ALL -> action {
                 taskDS.getAllTasks().cancellable()

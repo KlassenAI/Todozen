@@ -1,27 +1,25 @@
 package com.android.todozen.edittask
 
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.DrawableContainer
 import android.util.Log
-import android.view.Gravity
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
+import com.android.todozen.SharedRes
 import com.android.todozen.core.BaseBottomSheetDialogFragment
 import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
+import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.domain.Priority
 import com.android.todozen.core.setActionDoneListener
 import com.android.todozen.core.showDialog
 import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
 import com.android.todozen.expect.getName
-import com.skydoves.powermenu.MenuAnimation
+import com.android.todozen.expect.getString
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -45,8 +43,8 @@ class EditTaskDialog private constructor() :
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this@EditTaskDialog)
 
         etTitle.addTextChangedListener { viewModel.updateTitle(it.toString()) }
-        etTitle.setActionDoneListener { viewModel.editTask(state) }
-        btnEdit.setOnClickListener { viewModel.editTask(state); dismiss() }
+        etTitle.setActionDoneListener { viewModel.editTask() }
+        btnEdit.setOnClickListener { viewModel.editTask(); dismiss() }
         containerDate.setOnClickListener {
             showDialog(EditDateDialog.getInstance(state.task.date, state.task.time))
         }
@@ -57,20 +55,28 @@ class EditTaskDialog private constructor() :
     }
 
     override fun render(state: EditTaskState) = with(binding) {
+
+        Log.d("aboba", state.trueList.toString())
+        Log.d("aboba", state.toString())
+
         if (etTitle.text.toString() != state.task.title) {
             val wasEmpty = etTitle.text.isEmpty()
             etTitle.setText(state.task.title)
             if (wasEmpty) etTitle.setSelection(state.task.title.length)
         }
+
         val dateTime = formatDateTime(state.task.date, state.task.time)
         tvTitleDate.text = dateTime
         ivIconDate.isSelected = dateTime.orEmpty().isNotEmpty()
-        val listTitle = state.task.list.title
-        tvTitleTaskList.text = listTitle
-        ivIconTaskList.isSelected = listTitle.isNotEmpty()
+
+        tvTitleTaskList.text = state.listTitle ?: getString(SharedRes.strings.tasks_incoming)
+
         ivIconMyDay.isSelected = state.task.isInMyDay
+
         ivIconFavorite.isSelected = state.task.isFavorite
+
         ivIconPriority.setImageDrawable(getDrawable(state.task.priority))
+
     }
 
     companion object {

@@ -28,10 +28,10 @@ fun taskDelegate(
     binding.btnDone.setOnClickListener { checkListener.invoke(item) }
     binding.btnDelete.setOnClickListener { deleteListener.invoke(item) }
     bind { payloads ->
-        binding.ivListColor.setBackgroundColor(item.list.color ?: getColor(R.color.transparent))
+        binding.ivListColor.setBackgroundColor(item.list?.color ?: getColor(R.color.transparent))
         binding.tvTitle.text = item.title
         binding.tvDate.init(formatDateTime(item.date, item.time)) { text = it }
-        binding.tvList.init(item.list.id) { text = item.list.title }
+        binding.tvList.init(item.list?.id) { text = item.list?.title }
         binding.btnDone.isChecked = item.isDone
         binding.btnDone.buttonTintList = ColorStateList.valueOf(
             if (item.isDone) -7829368 else item.priority.color ?: -7829368

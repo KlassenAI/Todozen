@@ -13,7 +13,7 @@ import org.koin.java.KoinJavaComponent.inject
 private val context: Context by inject(Context::class.java)
 
 actual fun PriorityType.getName(): String = when (this) {
-    HIGH -> StringDesc.Resource(strings.priority_high).toString(context)
+    HIGH -> getString(strings.priority_high)
     MEDIUM -> StringDesc.Resource(strings.priority_medium).toString(context)
     LOW -> StringDesc.Resource(strings.priority_low).toString(context)
     NO -> StringDesc.Resource(strings.priority_default).toString(context)
