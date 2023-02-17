@@ -27,4 +27,20 @@
     <string name="tasks_current">Текущие</string>
     <string name="tasks_overdue">Просроченные</string>
 
+    // Даты
+    <string name="date_days_back">%s д. назад</string>
+    <string name="date_day_before_yesterday">Позавчера</string>
+    <string name="date_yesterday">Вчера</string>
+    <string name="date_today">Сегодня</string>
+    <string name="date_tomorrow">Завтра</string>
+    <string name="date_day_after_tomorrow">Послезавтра</string>
+    <string name="date_day_next_monday">Следующий пн</string>
+    <string name="date_day_next_tuesday">Следующий вт</string>
+    <string name="date_day_next_wednesday">Следующая ср</string>
+    <string name="date_day_next_thursday">Следующий чт</string>
+    <string name="date_day_next_friday">Следующая пт</string>
+    <string name="date_day_next_saturday">Следующая сб</string>
+    <string name="date_day_next_sunday">Следующее вс</string>
+    <string name="date_days_next">%s д. осталось</string>
+
 </resources>

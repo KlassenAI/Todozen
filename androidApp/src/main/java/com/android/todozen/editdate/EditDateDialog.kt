@@ -17,7 +17,7 @@ import com.android.todozen.core.domain.toLong
 import com.android.todozen.databinding.DialogEditDateBinding
 import com.android.todozen.databinding.LayoutDayBinding
 import com.android.todozen.core.domain.DateTimeUtil
-import com.android.todozen.core.domain.DateTimeUtil.formatTimeOrEmpty
+import com.android.todozen.core.domain.DateTimeUtil.formatTime
 import com.android.todozen.edittask.EditTaskViewModel
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
@@ -68,7 +68,7 @@ class EditDateDialog private constructor() : DialogFragment() {
     private fun initObservers() {
         editDateViewModel.state.bindNotNull(this) {
             this.state = it
-            binding.btnTime.text = formatTimeOrEmpty(it.time).ifEmpty { getString(R.string.add_time) }
+            binding.btnTime.text = formatTime(it.time).ifEmpty { getString(R.string.add_time) }
         }
     }
 

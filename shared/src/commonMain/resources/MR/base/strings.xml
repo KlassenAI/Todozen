@@ -27,4 +27,20 @@
     <string name="tasks_current">Current</string>
     <string name="tasks_overdue">Overdue</string>
 
+    // Dates
+    <string name="date_days_back">%s d. ago</string>
+    <string name="date_day_before_yesterday">Two Days Ago</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="date_today">Today</string>
+    <string name="date_tomorrow">Tomorrow</string>
+    <string name="date_day_after_tomorrow">Two Days Next</string>
+    <string name="date_day_next_monday">Next mo</string>
+    <string name="date_day_next_tuesday">Next tu</string>
+    <string name="date_day_next_wednesday">Next we</string>
+    <string name="date_day_next_thursday">Next th</string>
+    <string name="date_day_next_friday">Next fr</string>
+    <string name="date_day_next_saturday">Next sa</string>
+    <string name="date_day_next_sunday">Next su</string>
+    <string name="date_days_next">%s d. left</string>
+
 </resources>

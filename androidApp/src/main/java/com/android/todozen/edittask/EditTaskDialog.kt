@@ -56,9 +56,6 @@ class EditTaskDialog private constructor() :
 
     override fun render(state: EditTaskState) = with(binding) {
 
-        Log.d("aboba", state.trueList.toString())
-        Log.d("aboba", state.toString())
-
         if (etTitle.text.toString() != state.task.title) {
             val wasEmpty = etTitle.text.isEmpty()
             etTitle.setText(state.task.title)
