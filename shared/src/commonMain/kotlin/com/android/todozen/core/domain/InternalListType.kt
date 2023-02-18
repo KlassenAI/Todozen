@@ -10,6 +10,8 @@ enum class InternalListType(val id: Int) {
     DONE(7),
     DELETED(8);
 
+    fun isDateType(): Boolean = this == MY_DAY || this == TOMORROW || this == NEXT_WEEK
+
     companion object {
 
         val DEFAULT = ALL

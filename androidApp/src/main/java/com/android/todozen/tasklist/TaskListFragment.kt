@@ -13,6 +13,10 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.SharedRes
 import com.android.todozen.core.*
+import com.android.todozen.core.domain.InternalList
+import com.android.todozen.core.domain.InternalListType
+import com.android.todozen.core.domain.InternalListType.DELETED
+import com.android.todozen.core.domain.InternalListType.DONE
 import com.android.todozen.core.domain.Sort
 import com.android.todozen.core.domain.Sort.*
 import com.android.todozen.core.domain.Task
@@ -86,6 +90,9 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
         viewModel.state.bindNotNull(this) {
             state = it
 
+            val taskList = it.list as? InternalList
+            binding.fab.visible(taskList != null && taskList.type != DONE && taskList.type != DELETED)
+
             binding.tbContainer.toolbar.title = it.list?.title
             when (it.list?.sort) {
                 TITLE -> {
@@ -153,7 +160,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
 
     private fun initListeners() {
         binding.fab.setOnClickListener {
-            Log.d("aboba list", state.list.toString())
             editTaskViewModel.updateList(state.list!!)
             showDialog(EditTaskDialog.getInstance())
         }

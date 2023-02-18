@@ -38,7 +38,7 @@ class EditTaskViewModel(
         state { copy(task = task.apply { this.priority = priority }) }
     }
 
-    fun updateList(list: TaskList) = state { copy(list = list) }
+    fun updateList(list: TaskList) = state { copy(taskList = list) }
 
     fun loadTask(taskId: Long?) {
         action {
@@ -49,7 +49,7 @@ class EditTaskViewModel(
 
     fun editTask() {
         val state = state.value
-        val task = state.task.apply { list = state.trueList }
+        val task = state.task.apply { list = state.list }
         action {
             if (state.id == null) {
                 taskDS.insertTask(task)

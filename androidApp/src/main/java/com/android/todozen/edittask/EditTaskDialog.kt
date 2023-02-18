@@ -2,7 +2,6 @@ package com.android.todozen.edittask
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
@@ -11,8 +10,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.SharedRes
 import com.android.todozen.core.BaseBottomSheetDialogFragment
+import com.android.todozen.core.domain.DateTimeUtil
 import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
-import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.domain.Priority
 import com.android.todozen.core.setActionDoneListener
 import com.android.todozen.core.showDialog
@@ -22,6 +21,7 @@ import com.android.todozen.expect.getName
 import com.android.todozen.expect.getString
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import kotlinx.datetime.LocalDateTime
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class EditTaskDialog private constructor() :
@@ -62,13 +62,15 @@ class EditTaskDialog private constructor() :
             if (wasEmpty) etTitle.setSelection(state.task.title.length)
         }
 
-        val dateTime = formatDateTime(state.task.date, state.task.time)
+        val dateTimePair = state.dateTime
+        val dateTime = formatDateTime(dateTimePair.first, dateTimePair.second)
         tvTitleDate.text = dateTime
         ivIconDate.isSelected = dateTime.orEmpty().isNotEmpty()
 
-        tvTitleTaskList.text = state.listTitle ?: getString(SharedRes.strings.tasks_incoming)
-
         ivIconMyDay.isSelected = state.task.isInMyDay
+
+        tvTitleTaskList.text = state.list?.title ?: getString(SharedRes.strings.tasks_incoming)
+
 
         ivIconFavorite.isSelected = state.task.isFavorite
 
