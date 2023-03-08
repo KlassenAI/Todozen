@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
@@ -29,6 +30,7 @@ import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import com.android.todozen.expect.getString
 import dev.icerock.moko.mvvm.utils.bindNotNull
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListListener {
@@ -86,6 +88,15 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
     }
 
     private fun initObservers() {
+
+        lifecycleScope.launch {
+            val points = viewModel.getAllPoints()
+            Log.d("bebra", points.toString())
+
+            val actions = viewModel.getActions()
+            Log.d("bebra", actions.toString())
+        }
+
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this)
         viewModel.state.bindNotNull(this) {
             state = it

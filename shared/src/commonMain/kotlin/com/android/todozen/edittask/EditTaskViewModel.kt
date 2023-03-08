@@ -1,10 +1,7 @@
 package com.android.todozen.edittask
 
-import com.android.todozen.core.domain.Task
 import com.android.todozen.core.data.TaskDataSource
-import com.android.todozen.core.domain.Priority
-import com.android.todozen.core.domain.EditableList
-import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.domain.*
 import com.android.todozen.core.presentation.BaseViewModel
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.datetime.LocalDate
@@ -22,8 +19,8 @@ class EditTaskViewModel(
         state { copy(task = task.apply { this.title = title }) }
     }
 
-    fun updateDateTime(date: LocalDate?, time: LocalTime?) {
-        state { copy(task = task.apply { this.date = date; this.time = time }) }
+    fun updateDateTime(date: LocalDate?, time: LocalTime?, repeat: RepeatType) {
+        state { copy(task = task.apply { this.date = date; this.time = time; this.repeat = repeat }) }
     }
 
     fun updateTaskList(taskList: EditableList) {

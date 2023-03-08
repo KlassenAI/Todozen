@@ -11,14 +11,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
-import com.android.todozen.core.domain.toLocalDate
-import com.android.todozen.core.domain.toLocalTime
-import com.android.todozen.core.domain.toLong
+import com.android.todozen.SharedRes
+import com.android.todozen.core.domain.*
 import com.android.todozen.databinding.DialogEditDateBinding
 import com.android.todozen.databinding.LayoutDayBinding
-import com.android.todozen.core.domain.DateTimeUtil
 import com.android.todozen.core.domain.DateTimeUtil.formatTime
 import com.android.todozen.edittask.EditTaskViewModel
+import com.android.todozen.expect.getString
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
@@ -29,6 +28,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.YearMonth
 import kotlinx.datetime.LocalDate as KotlinLocalDate
 import java.time.LocalDate as JavaLocalDate
@@ -37,7 +37,7 @@ class EditDateDialog private constructor() : DialogFragment() {
 
     private val binding by viewBinding<DialogEditDateBinding>()
     private val editTaskViewModel by sharedViewModel<EditTaskViewModel>()
-    private val editDateViewModel by sharedViewModel<EditDateViewModel>()
+    private val viewModel by viewModel<EditDateViewModel>()
     private var state = EditDateState()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,9 +51,9 @@ class EditDateDialog private constructor() : DialogFragment() {
     private fun initViews() = with(binding) {
 
         val localDate = arguments?.getLongArray(LOCAL_DATE)?.firstOrNull()
-        editDateViewModel.updateDate(localDate?.toLocalDate())
+        viewModel.updateDate(localDate?.toLocalDate())
         val localTime = arguments?.getLongArray(LOCAL_TIME)?.firstOrNull()
-        editDateViewModel.updateTime(localTime?.toLocalTime())
+        viewModel.updateTime(localTime?.toLocalTime())
 
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(100)
@@ -63,33 +63,35 @@ class EditDateDialog private constructor() : DialogFragment() {
         calendar.scrollToMonth(currentMonth)
 
         calendar.dayBinder = getDayBinder()
+
+        btnTime.text = getString(SharedRes.strings.add_time)
+        btnCancel.text = getString(SharedRes.strings.cancel)
+        btnAccept.text = getString(SharedRes.strings.apply)
     }
 
     private fun initObservers() {
-        editDateViewModel.state.bindNotNull(this) {
+        viewModel.state.bindNotNull(this) {
             this.state = it
-            binding.btnTime.text = formatTime(it.time).ifEmpty { getString(R.string.add_time) }
+            binding.btnTime.text = formatTime(it.time).ifEmpty { getString(SharedRes.strings.add_time) }
         }
     }
 
     private fun initListeners() = with(binding) {
         btnAccept.setOnClickListener {
-            editTaskViewModel.updateDateTime(state.date, state.time)
-            editDateViewModel.clearState()
+            editTaskViewModel.updateDateTime(state.date, state.time, state.repeat)
             dismiss()
         }
         btnCancel.setOnClickListener { dismiss() }
         btnTime.setOnClickListener {
             val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                editDateViewModel.updateTime(LocalTime.fromSecondOfDay(3600 * hour + 60 * minute))
+                viewModel.updateTime(LocalTime.fromSecondOfDay(3600 * hour + 60 * minute))
             }
             val time = state.time ?: DateTimeUtil.now().time
             TimePickerDialog(context, timeSetListener, time.hour, time.minute, true).show()
         }
-        btnTime.setOnLongClickListener {
-            editDateViewModel.updateTime(null)
-            true
-        }
+        btnTime.setOnLongClickListener { viewModel.updateTime(null); true }
+        btnRepeat.setOnClickListener { viewModel.updateRepeat(RepeatType.DAILY) }
+        btnRepeat.setOnLongClickListener { viewModel.updateRepeat(RepeatType.DEFAULT) ; true }
     }
 
     private fun getDayBinder() = object : MonthDayBinder<DayViewContainer> {
@@ -147,10 +149,10 @@ class EditDateDialog private constructor() : DialogFragment() {
 
                 val currentSelection = state.date?.toJavaLocalDate()
                 if (currentSelection == day.date) {
-                    editDateViewModel.updateDate(null)
+                    viewModel.updateDate(null)
                     binding.calendar.notifyDateChanged(currentSelection)
                 } else {
-                    editDateViewModel.updateDate(day.date.toKotlinLocalDate())
+                    viewModel.updateDate(day.date.toKotlinLocalDate())
                     binding.calendar.notifyDateChanged(day.date)
                     currentSelection?.let {
                         binding.calendar.notifyDateChanged(currentSelection)

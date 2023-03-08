@@ -5,11 +5,12 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 data class Task(
-    val id: Long? = null,
+    var id: Long? = null,
     var title: String = "",
     var isDone: Boolean = false,
     var date: LocalDate? = null,
     var time: LocalTime? = null,
+    var repeat: RepeatType = RepeatType.NO,
     var isInMyDay: Boolean = false,
     var isDeleted: Boolean = false,
     var isFavorite: Boolean = false,

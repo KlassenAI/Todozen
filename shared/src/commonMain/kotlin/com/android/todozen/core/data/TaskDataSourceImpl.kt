@@ -12,37 +12,62 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
     private val queries = db.taskQueries
 
     override suspend fun insertTask(task: Task) {
-        queries.insertTask(
-            id = null,
-            created = DateTimeUtil.now().toLong(),
-            updated = DateTimeUtil.now().toLong(),
-            title = task.title,
-            isDone = task.isDone,
-            date = task.date?.toLong(),
-            time = task.time?.toLong(),
-            listId = task.list?.id,
-            isInMyDay = task.isInMyDay,
-            isDeleted = task.isDeleted,
-            isFavorite = task.isFavorite,
-            priorityId = task.priority.type.id
-        )
+        queries.transaction {
+            val dateTime = DateTimeUtil.now().toLong()
+            queries.insertTask(
+                id = null,
+                repeat = task.repeat.toString(),
+                created = dateTime,
+                updated = dateTime,
+                title = task.title,
+                isDone = task.isDone,
+                date = task.date?.toLong(),
+                time = task.time?.toLong(),
+                listId = task.list?.id,
+                isInMyDay = task.isInMyDay,
+                isDeleted = task.isDeleted,
+                isFavorite = task.isFavorite,
+                priorityId = task.priority.type.id
+            )
+            val taskId = queries.getTaskId(dateTime).executeAsOne()
+            queries.addAction(
+                id = null,
+                //todo добавить логику подсчета очков за создание задачи
+                points = 100,
+                actionType = ActionType.ADD.name,
+                taskId = taskId
+            )
+        }
     }
 
     override suspend fun updateTask(task: Task) {
-        queries.updateTask(
-            id = task.id,
-            created = task.created.toLong(),
-            updated = DateTimeUtil.now().toLong(),
-            title = task.title,
-            isDone = task.isDone,
-            date = task.date?.toLong(),
-            time = task.time?.toLong(),
-            listId = task.list?.id,
-            isInMyDay = task.isInMyDay,
-            isDeleted = task.isDeleted,
-            isFavorite = task.isFavorite,
-            priorityId = task.priority.type.id
-        )
+        queries.transaction {
+            queries.updateTask(
+                id = task.id,
+                repeat = task.repeat.toString(),
+                created = task.created.toLong(),
+                updated = DateTimeUtil.now().toLong(),
+                title = task.title,
+                isDone = task.isDone,
+                date = task.date?.toLong(),
+                time = task.time?.toLong(),
+                listId = task.list?.id,
+                isInMyDay = task.isInMyDay,
+                isDeleted = task.isDeleted,
+                isFavorite = task.isFavorite,
+                priorityId = task.priority.type.id
+            )
+            // todo переписать
+            if (task.isDone) {
+                queries.addAction(
+                    id = null,
+                    // todo посмотреть
+                    points = 200,
+                    actionType = ActionType.DONE.name,
+                    taskId = task.id
+                )
+            }
+        }
     }
 
     override suspend fun deleteTask(id: Long) {

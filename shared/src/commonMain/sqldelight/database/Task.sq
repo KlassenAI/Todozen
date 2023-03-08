@@ -98,6 +98,7 @@ CREATE TABLE TaskEntity(
     id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     date INTEGER,
     time INTEGER,
+    repeat TEXT NOT NULL,
     title TEXT NOT NULL,
     created INTEGER NOT NULL,
     updated INTEGER NOT NULL,
@@ -113,11 +114,11 @@ CREATE TABLE TaskEntity(
 
 insertTask:
 INSERT INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateTask:
 REPLACE INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
 
 deleteTask:
 DELETE FROM TaskEntity
@@ -128,6 +129,10 @@ SELECT * FROM TaskEntity
 LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE TaskEntity.id = ?;
+
+getTaskId:
+SELECT id FROM TaskEntity
+WHERE TaskEntity.created = ?;
 
 getTasks:
 SELECT * FROM TaskEntity
@@ -224,3 +229,40 @@ SELECT COUNT(*) FROM TaskEntity
 LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE isDeleted = FALSE;
+
+CREATE TABLE ActionEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    points INTEGER NOT NULL,
+    actionType TEXT NOT NULL,
+    taskId INTEGER,
+    FOREIGN KEY (taskId) REFERENCES TaskEntity(id)
+);
+
+addAction:
+INSERT INTO ActionEntity
+VALUES (?,?,?,?);
+
+deleteAction:
+DELETE FROM ActionEntity
+WHERE taskId = ? AND actionType = ?;
+
+getAllPoints:
+SELECT COALESCE(SUM(points), 0) FROM ActionEntity;
+
+getListPoints:
+SELECT COALESCE(SUM(points), 0) FROM ActionEntity
+LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
+WHERE listId = ?;
+
+getAllActions:
+SELECT * FROM ActionEntity
+LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id;
+
+getTaskActions:
+SELECT * FROM ActionEntity
+LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE taskId = ?;

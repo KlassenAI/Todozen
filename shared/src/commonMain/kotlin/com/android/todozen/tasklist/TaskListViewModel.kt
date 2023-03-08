@@ -1,5 +1,6 @@
 package com.android.todozen.tasklist
 
+import com.android.todozen.core.data.ActionDataSource
 import com.android.todozen.core.data.TaskDataSource
 import com.android.todozen.core.data.ListDataSource
 import com.android.todozen.core.domain.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.runBlocking
 class TaskListViewModel(
     private val taskDS: TaskDataSource,
     private val listDS: ListDataSource,
+    private val actionDS: ActionDataSource,
     val eventsDispatcher: EventsDispatcher<EditTaskListListener>
 ) : BaseViewModel<TaskListState>() {
 
@@ -81,7 +83,17 @@ class TaskListViewModel(
     }
 
     fun checkTask(task: Task) {
-        action { taskDS.updateTask(task.apply { isDone = isDone.not() }) }
+        action {
+            if (!task.isDone && task.repeat != RepeatType.DEFAULT) {
+                taskDS.insertTask(TaskUtil.getNextRepeatTask(task))
+            }
+            taskDS.updateTask(
+                task.apply {
+                    isDone = isDone.not()
+                    repeat = RepeatType.NO
+                }
+            )
+        }
     }
 
     fun deleteTask(task: Task) {
@@ -108,4 +120,8 @@ class TaskListViewModel(
             state { copy(list = list) }
         }
     }
+
+    suspend fun getAllPoints() = actionDS.getAllPoints()
+
+    suspend fun getActions() = actionDS.getAllActions()
 }
