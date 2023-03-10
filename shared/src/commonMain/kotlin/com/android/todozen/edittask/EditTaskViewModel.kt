@@ -40,15 +40,14 @@ class EditTaskViewModel(
     fun loadTask(taskId: Long?) {
         action {
             val task = taskId?.let { taskDS.getTask(it) } ?: Task()
-            state { copy(id = task.id, task = task, isListPicked = taskId != null) }
+            state { copy(id = if (task.id == 0L) null else task.id, task = task, isListPicked = taskId != null) }
         }
     }
 
     fun editTask() {
-        val state = state.value
-        val task = state.task.apply { list = state.list }
         action {
-            if (state.id == null) {
+            val task = it.task.apply { list = it.list }
+            if (it.id == null) {
                 taskDS.insertTask(task)
             } else {
                 taskDS.updateTask(task)

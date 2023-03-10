@@ -3,6 +3,7 @@ package com.android.todozen.tasklist
 import com.android.todozen.core.data.ActionDataSource
 import com.android.todozen.core.data.TaskDataSource
 import com.android.todozen.core.data.ListDataSource
+import com.android.todozen.core.data.TaskRepository
 import com.android.todozen.core.domain.*
 import com.android.todozen.core.domain.InternalListType.*
 import com.android.todozen.core.presentation.BaseViewModel
@@ -10,12 +11,14 @@ import com.android.todozen.edittasklist.EditTaskListListener
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 
 class TaskListViewModel(
     private val taskDS: TaskDataSource,
     private val listDS: ListDataSource,
     private val actionDS: ActionDataSource,
+    private val taskRepository: TaskRepository,
     val eventsDispatcher: EventsDispatcher<EditTaskListListener>
 ) : BaseViewModel<TaskListState>() {
 
@@ -46,60 +49,37 @@ class TaskListViewModel(
     }
 
     private fun loadInternalListTasks(list: InternalList) {
-        job = when (list.type) {
-            ALL -> action {
-                taskDS.getAllTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            MY_DAY -> action {
-                taskDS.getMyDayTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            TOMORROW -> action {
-                taskDS.getAllTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            NEXT_WEEK -> action {
-                taskDS.getAllTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            INCOMING -> action {
-                taskDS.getAllTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            FAVORITE -> action {
-                taskDS.getFavoriteTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            DONE -> action {
-                taskDS.getAllTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
-            }
-            DELETED -> action {
-                taskDS.getDeletedTasks().cancellable()
-                    .collect { state { copy(list = list, tasks = it) } }
+        val taskFlow = when(list.type) {
+            ALL -> taskDS.getAllTasks()
+            MY_DAY -> taskDS.getMyDayTasks()
+            TOMORROW -> taskDS.getAllTasks()
+            NEXT_WEEK -> taskDS.getAllTasks()
+            INCOMING -> taskDS.getAllTasks()
+            FAVORITE -> taskDS.getFavoriteTasks()
+            DONE -> taskDS.getAllTasks()
+            DELETED -> taskDS.getDeletedTasks()
+        }
+        job = action {
+            taskFlow.cancellable().collect {
+                state { copy(list = list, tasks = it) }
             }
         }
     }
 
     fun checkTask(task: Task) {
         action {
-            if (!task.isDone && task.repeat != RepeatType.DEFAULT) {
-                taskDS.insertTask(TaskUtil.getNextRepeatTask(task))
-            }
-            taskDS.updateTask(
-                task.apply {
-                    isDone = isDone.not()
-                    repeat = RepeatType.NO
-                }
-            )
+            taskRepository.checkTask(task)
+            // проверяем достижения
+            // todo дополнить проверку для достижений
+            // обновляем очки
+            // todo дополнить функцию обновления
         }
     }
 
     fun deleteTask(task: Task) {
         action {
             if (task.isDeleted) {
-                taskDS.deleteTask(task.id!!)
+                taskDS.deleteTask(task.id)
             } else {
                 taskDS.updateTask(task.apply { isDeleted = isDeleted.not() })
             }

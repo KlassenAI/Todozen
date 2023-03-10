@@ -20,7 +20,7 @@ abstract class BaseViewModel<S : BaseState>: ViewModel() {
 
     fun clearState() = state { initialState() }
 
-    protected fun action(block: suspend CoroutineScope.() -> Unit): Job {
-        return viewModelScope.launch { block() }
+    protected fun action(block: suspend CoroutineScope.(state: S) -> Unit): Job {
+        return viewModelScope.launch { block(state.value) }
     }
 }

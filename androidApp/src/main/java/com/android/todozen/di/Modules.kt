@@ -12,7 +12,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { EditTaskViewModel(get(), EventsDispatcher<EditTaskListener>()) }
-    single { TaskListViewModel(get(), get(), get(), EventsDispatcher<EditTaskListListener>()) }
+    single { TaskListViewModel(get(), get(), get(), get(), EventsDispatcher<EditTaskListListener>()) }
     single { EditDateViewModel(get()) }
     single { MenuViewModel(get()) }
     single { EditTaskListViewModel(get()) }

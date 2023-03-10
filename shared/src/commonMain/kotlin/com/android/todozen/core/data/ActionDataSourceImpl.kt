@@ -24,4 +24,20 @@ class ActionDataSourceImpl(db: TaskDatabase): ActionDataSource {
     override suspend fun getTaskActions(taskId: Long): List<Action> {
         return queries.getTaskActions(taskId).executeAsList().map { it.map() }
     }
+
+    override suspend fun addAction(action: Action) {
+        queries.addAction(
+            id = null,
+            points = action.points,
+            actionType = action.type.name,
+            taskId = action.task?.id
+        )
+    }
+
+    override suspend fun deleteAction(actionType: ActionType, taskId: Long) {
+        queries.deleteAction(
+            actionType = actionType.name,
+            taskId = taskId
+        )
+    }
 }

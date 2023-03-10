@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDate
 data class TaskListState(
     val list: TaskList? = null,
     val tasks: List<Task> = emptyList(),
+    val points: Long = 0
 ) : BaseState {
 
     val lists: List<EditableList?>

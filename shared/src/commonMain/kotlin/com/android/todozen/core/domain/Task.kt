@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 
 data class Task(
-    var id: Long? = null,
+    var id: Long = 0,
     var title: String = "",
     var isDone: Boolean = false,
     var date: LocalDate? = null,

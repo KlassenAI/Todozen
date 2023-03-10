@@ -11,4 +11,5 @@ val sharedModule = module {
     single<TaskDataSource> { TaskDataSourceImpl(TaskDatabase(get())) }
     single<ListDataSource> { ListDataSourceImpl(TaskDatabase(get())) }
     single<ActionDataSource> { ActionDataSourceImpl(TaskDatabase(get())) }
+    single<TaskRepository> { TaskRepository(get(), get()) }
 }
