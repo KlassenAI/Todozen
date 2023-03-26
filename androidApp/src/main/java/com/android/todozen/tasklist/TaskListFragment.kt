@@ -4,46 +4,45 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.android.todozen.R
 import com.android.todozen.SharedRes
 import com.android.todozen.core.*
-import com.android.todozen.core.domain.InternalList
-import com.android.todozen.core.domain.InternalListType
-import com.android.todozen.core.domain.InternalListType.DELETED
-import com.android.todozen.core.domain.InternalListType.DONE
+import com.android.todozen.core.domain.Action
 import com.android.todozen.core.domain.Sort
 import com.android.todozen.core.domain.Sort.*
 import com.android.todozen.core.domain.Task
+import com.android.todozen.core.domain.TaskList
 import com.android.todozen.databinding.FragmentTaskListBinding
 import com.android.todozen.edittask.EditTaskDialog
 import com.android.todozen.edittask.EditTaskViewModel
-import com.android.todozen.edittasklist.EditTaskListListener
 import com.android.todozen.expect.getName
+import com.android.todozen.expect.getString
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
-import com.android.todozen.expect.getString
 import dev.icerock.moko.mvvm.utils.bindNotNull
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListListener {
+class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewModel.EventsListener {
 
     private val binding by viewBinding<FragmentTaskListBinding>()
     private val viewModel by sharedViewModel<TaskListViewModel>()
     private val editTaskViewModel by sharedViewModel<EditTaskViewModel>()
-    private var state = TaskListState()
 
     private fun getTaskAdapter() = adapter(taskDelegate(::clickTask, ::checkTask, ::deleteTask))
 
-    private fun clickTask(task: Task) = showDialog(EditTaskDialog.getInstance(task.id))
+    private fun clickTask(task: Task) {
+        showDialog(EditTaskDialog.getInstance(task.id))
+    }
+
     private fun checkTask(task: Task) = viewModel.checkTask(task)
+
     private fun deleteTask(task: Task) = viewModel.deleteTask(task)
 
     private var currentTasksByTitleRecycler: CustomRecyclerView? = null
@@ -57,13 +56,13 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
         initObservers()
         initListeners()
     }
 
     private fun initViews() = with(binding) {
+
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.tbContainer.toolbar)
 
         currentTasksByTitleRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
@@ -89,20 +88,11 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
 
     private fun initObservers() {
 
-        lifecycleScope.launch {
-            val points = viewModel.getAllPoints()
-            Log.d("bebra", points.toString())
-
-            val actions = viewModel.getActions()
-            Log.d("bebra", actions.toString())
-        }
-
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this)
         viewModel.state.bindNotNull(this) {
-            state = it
 
-            val taskList = it.list as? InternalList
-            binding.fab.visible(taskList != null && taskList.type != DONE && taskList.type != DELETED)
+            binding.indicator.progress = it.taskListLevel.pointsInCurrentLevel.toInt()
+            binding.indicator.max = it.taskListLevel.pointsForNextLevel
 
             binding.tbContainer.toolbar.title = it.list?.title
             when (it.list?.sort) {
@@ -170,10 +160,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
     }
 
     private fun initListeners() {
-        binding.fab.setOnClickListener {
-            editTaskViewModel.updateList(state.list!!)
-            showDialog(EditTaskDialog.getInstance())
-        }
+        binding.fab.setOnClickListener { viewModel.showAddTaskDialog() }
         binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
     }
 
@@ -184,6 +171,19 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), EditTaskListList
             list.btnHide.setOnClickListener { list.isHide = list.isHide.not() }
             addView(list)
         }
+    }
+
+    override fun showAddActionDialog(list: TaskList) {
+        val directions =
+        editTaskViewModel.updateList(list)
+        showDialog(EditTaskDialog.getInstance())
+    }
+
+    override fun showMessageNextRecurringTaskCreated() {
+        Toast.makeText(requireContext(), "Следующая повторяющася задача создана", Toast.LENGTH_SHORT).show()
+    }
+    override fun showSnackbarActionAdded(action: Action) {
+        Log.d("bebra", action.toString())
     }
 
     override fun showSorts(sorts: List<Sort>) {

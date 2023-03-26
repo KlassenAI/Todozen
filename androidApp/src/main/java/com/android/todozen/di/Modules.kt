@@ -11,8 +11,12 @@ import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import org.koin.dsl.module
 
 val appModule = module {
+
     single { EditTaskViewModel(get(), EventsDispatcher<EditTaskListener>()) }
-    single { TaskListViewModel(get(), get(), get(), get(), EventsDispatcher<EditTaskListListener>()) }
+    single { EventsDispatcher<TaskListViewModel.EventsListener>() }
+    single {
+        TaskListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+    }
     single { EditDateViewModel(get()) }
     single { MenuViewModel(get()) }
     single { EditTaskListViewModel(get()) }

@@ -1,25 +1,25 @@
 package com.android.todozen.tasklist
 
-import com.android.todozen.core.data.ActionDataSource
-import com.android.todozen.core.data.TaskDataSource
-import com.android.todozen.core.data.ListDataSource
-import com.android.todozen.core.data.TaskRepository
 import com.android.todozen.core.domain.*
-import com.android.todozen.core.domain.InternalListType.*
+import com.android.todozen.core.domain.UseCaseResult.Success
 import com.android.todozen.core.presentation.BaseViewModel
-import com.android.todozen.edittasklist.EditTaskListListener
+import com.android.todozen.core.usecases.*
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.cancellable
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.runBlocking
 
 class TaskListViewModel(
-    private val taskDS: TaskDataSource,
-    private val listDS: ListDataSource,
-    private val actionDS: ActionDataSource,
-    private val taskRepository: TaskRepository,
-    val eventsDispatcher: EventsDispatcher<EditTaskListListener>
+    private val getMyDayListUseCase: GetMyDayListUseCase,
+    private val getTasksUseCase: GetTasksUseCase,
+    private val getSortsUseCase: GetSortsUseCase,
+    private val getTaskListLevelUseCase: GetTaskListLevelUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val completeTaskUseCase: CompleteTaskUseCase,
+    private val createCompleteTaskActionUseCase: CreateCompleteTaskActionUseCase,
+    private val createNextRecurringTaskUseCase: CreateNextRecurringTaskUseCase,
+    private val changeListSortUseCase: ChangeListSortUseCase,
+    private val getActionsUseCase: GetActionsUseCase,
+    val eventsDispatcher: EventsDispatcher<EventsListener>
 ) : BaseViewModel<TaskListState>() {
 
     override fun initialState() = TaskListState()
@@ -28,80 +28,76 @@ class TaskListViewModel(
 
     init {
         action {
-            val list = listDS.getMyDayList()
-            loadListTasks(list)
+            val myDayList = getMyDayListUseCase.execute()
+            getListTasks(myDayList)
         }
     }
 
-    fun loadListTasks(list: TaskList) {
+    suspend fun getActions() = getActionsUseCase.execute()
+
+    fun getListTasks(list: TaskList) {
         job?.cancel()
-        when (list) {
-            is EditableList -> loadEditableListTasks(list)
-            is InternalList -> loadInternalListTasks(list)
-        }
-    }
-
-    private fun loadEditableListTasks(list: EditableList) {
         job = action {
-            taskDS.getTasks(list.id).cancellable()
-                .collect { state { copy(list = list, tasks = it) } }
-        }
-    }
-
-    private fun loadInternalListTasks(list: InternalList) {
-        val taskFlow = when(list.type) {
-            ALL -> taskDS.getAllTasks()
-            MY_DAY -> taskDS.getMyDayTasks()
-            TOMORROW -> taskDS.getAllTasks()
-            NEXT_WEEK -> taskDS.getAllTasks()
-            INCOMING -> taskDS.getAllTasks()
-            FAVORITE -> taskDS.getFavoriteTasks()
-            DONE -> taskDS.getAllTasks()
-            DELETED -> taskDS.getDeletedTasks()
-        }
-        job = action {
-            taskFlow.cancellable().collect {
+            getTasksUseCase.execute(list).cancellable().collect {
                 state { copy(list = list, tasks = it) }
             }
         }
+        getListPoints(list)
     }
 
     fun checkTask(task: Task) {
         action {
-            taskRepository.checkTask(task)
+            if (createNextRecurringTaskUseCase.execute(task) is Success) {
+                eventsDispatcher.dispatchEvent { showMessageNextRecurringTaskCreated() }
+            }
+            completeTaskUseCase.execute(task)
+
+            val createCompleteTaskActionUseCase = createCompleteTaskActionUseCase.execute(task)
+            if (createCompleteTaskActionUseCase is Success) {
+                eventsDispatcher.dispatchEvent {
+                    showSnackbarActionAdded(createCompleteTaskActionUseCase.data)
+                }
+            }
             // проверяем достижения
             // todo дополнить проверку для достижений
-            // обновляем очки
-            // todo дополнить функцию обновления
+            getListPoints(it.list!!)
         }
     }
 
     fun deleteTask(task: Task) {
-        action {
-            if (task.isDeleted) {
-                taskDS.deleteTask(task.id)
-            } else {
-                taskDS.updateTask(task.apply { isDeleted = isDeleted.not() })
-            }
-        }
+        action { deleteTaskUseCase.execute(task) }
     }
 
     fun showSorts() {
-        eventsDispatcher.dispatchEvent { showSorts(Sort.values().toList()) }
+        eventsDispatcher.dispatchEvent {
+            showSorts(getSortsUseCase.execute())
+        }
     }
 
     fun updateSort(sort: Sort) {
         action {
-            val list = state.value.list.apply { this?.sort = sort }
-            when (list) {
-                is EditableList -> listDS.updateEditableList(list)
-                is InternalList -> listDS.updateInternalList(list)
-            }
+            changeListSortUseCase.execute(it.list!!, sort)
             state { copy(list = list) }
         }
     }
 
-    suspend fun getAllPoints() = actionDS.getAllPoints()
+    private fun getListPoints(list: TaskList) {
+        action {
+            val taskListLevel = getTaskListLevelUseCase.execute(list)
+            state { copy(taskListLevel = taskListLevel) }
+        }
+    }
 
-    suspend fun getActions() = actionDS.getAllActions()
+    fun showAddTaskDialog() {
+        action {
+            eventsDispatcher.dispatchEvent { showAddActionDialog(state.value.list!!) }
+        }
+    }
+
+    interface EventsListener {
+        fun showAddActionDialog(list: TaskList)
+        fun showMessageNextRecurringTaskCreated()
+        fun showSnackbarActionAdded(action: Action)
+        fun showSorts(sorts: List<Sort>)
+    }
 }

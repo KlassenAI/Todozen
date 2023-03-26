@@ -25,7 +25,7 @@ class MenuFragment : Fragment(R.layout.fragment_menu) {
     private var state = MenuState()
 
     private fun clickItem(list: TaskList) {
-        listViewModel.loadListTasks(list)
+        listViewModel.getListTasks(list)
         findNavController().navigate(R.id.menu_to_taskList)
     }
 

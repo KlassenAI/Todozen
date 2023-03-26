@@ -13,13 +13,13 @@ interface TaskDataSource {
 
     suspend fun getPriorities(): List<Priority>
 
-    fun getTasks(listId: Long?): Flow<List<Task>>
-    fun getMyDayTasks(): Flow<List<Task>>
-    fun getTomorrowTasks(): Flow<List<Task>>
-    fun getNextWeekTasks(): Flow<List<Task>>
-    fun getIncomingTasks(): Flow<List<Task>>
-    fun getFavoriteTasks(): Flow<List<Task>>
-    fun getDoneTasks(): Flow<List<Task>>
-    fun getDeletedTasks(): Flow<List<Task>>
-    fun getAllTasks(): Flow<List<Task>>
+    suspend fun getTasks(listId: Long?): Flow<List<Task>>
+    suspend fun getMyDayTasks(): Flow<List<Task>>
+    suspend fun getTomorrowTasks(): Flow<List<Task>>
+    suspend fun getNextWeekTasks(): Flow<List<Task>>
+    suspend fun getIncomingTasks(): Flow<List<Task>>
+    suspend fun getFavoriteTasks(): Flow<List<Task>>
+    suspend fun getDoneTasks(): Flow<List<Task>>
+    suspend fun getDeletedTasks(): Flow<List<Task>>
+    suspend fun getAllTasks(): Flow<List<Task>>
 }

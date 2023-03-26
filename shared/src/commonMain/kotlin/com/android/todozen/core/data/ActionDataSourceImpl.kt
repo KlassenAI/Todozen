@@ -10,7 +10,7 @@ class ActionDataSourceImpl(db: TaskDatabase): ActionDataSource {
     private val queries = db.taskQueries
 
     override suspend fun getAllPoints(): Long {
-        return queries.getAllPoints().executeAsOne()
+        return queries.getAllPoints().executeAsOne().SUM ?: 0L
     }
 
     override suspend fun getListPoints(listId: Long): Long {

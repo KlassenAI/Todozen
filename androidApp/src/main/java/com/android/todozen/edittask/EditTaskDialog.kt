@@ -2,6 +2,7 @@ package com.android.todozen.edittask
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
@@ -43,8 +44,13 @@ class EditTaskDialog private constructor() :
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this@EditTaskDialog)
 
         etTitle.addTextChangedListener { viewModel.updateTitle(it.toString()) }
-        etTitle.setActionDoneListener { viewModel.editTask() }
-        btnEdit.setOnClickListener { viewModel.editTask(); dismiss() }
+        etTitle.setActionDoneListener {
+            Log.d("bebra", state.task.toString())
+            // viewModel.editTask()
+        }
+        btnEdit.setOnClickListener {
+
+            viewModel.editTask(); dismiss() }
         containerDate.setOnClickListener {
             showDialog(EditDateDialog.getInstance(state.task.date, state.task.time))
         }
@@ -71,11 +77,9 @@ class EditTaskDialog private constructor() :
 
         tvTitleTaskList.text = state.list?.title ?: getString(SharedRes.strings.tasks_incoming)
 
-
         ivIconFavorite.isSelected = state.task.isFavorite
 
         ivIconPriority.setImageDrawable(getDrawable(state.task.priority))
-
     }
 
     companion object {

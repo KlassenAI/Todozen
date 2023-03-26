@@ -2,7 +2,6 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("com.squareup.sqldelight")
-    id("kotlin-parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
@@ -20,8 +19,6 @@ multiplatformResources {
 
 kotlin {
     android()
-
-
 
     val moko = "0.15.0"
     val sqldelight = "1.5.3"
@@ -93,7 +90,7 @@ kotlin {
                 implementation("com.squareup.sqldelight:android-driver:$sqldelight")
             }
         }
-        val androidTest by getting
+//        val androidTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -129,9 +126,9 @@ sqldelight {
 
 android {
     namespace = "com.android.todozen"
-    compileSdk = 32
+    compileSdk = 33
     defaultConfig {
         minSdk = 24
-        targetSdk = 32
+        targetSdk = 33
     }
 }

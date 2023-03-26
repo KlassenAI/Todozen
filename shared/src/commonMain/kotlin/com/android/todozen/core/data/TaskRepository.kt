@@ -2,36 +2,21 @@ package com.android.todozen.core.data
 
 import com.android.todozen.core.domain.*
 
-class TaskRepository(
-    private val taskSource: TaskDataSource,
-    private val actionSource: ActionDataSource
-) {
+class TaskRepository(private val taskLocalSource: TaskDataSource) {
 
-    suspend fun checkTask(task: Task) {
+    suspend fun addTask(task: Task) = taskLocalSource.insertTask(task)
 
-        // создаем следующее задание, если задача выполнена и есть повторение
-        if (!task.isDone && task.repeat != RepeatType.DEFAULT) {
-            taskSource.insertTask(TaskUtil.getNextRepeatTask(task))
-        }
+    suspend fun updateTask(task: Task) = taskLocalSource.updateTask(task)
 
-        // изменить состояние выполнения и очищаем повторяемость, если задача выполнена
-        task.isDone = !task.isDone
-        if (task.isDone) {
-            task.repeat = RepeatType.NO
-        }
+    suspend fun deleteTask(taskId: Long) = taskLocalSource.deleteTask(taskId)
 
-        // сохраняем задачу в базе данных
-        taskSource.updateTask(task)
-
-        // добавляем действие о выполнении, если задача была выполнена
-        if (task.isDone) {
-            actionSource.addAction(TaskUtil.getDoneAction(task))
-        } else {
-            actionSource.deleteAction(ActionType.DONE, task.id)
-        }
-    }
-
-    suspend fun getListPoints(listId: Long): Long {
-        return actionSource.getListPoints(listId)
-    }
+    suspend fun getTasks(listId: Long?) = taskLocalSource.getTasks(listId)
+    suspend fun getMyDayTasks() = taskLocalSource.getMyDayTasks()
+    suspend fun getTomorrowTasks() = taskLocalSource.getTomorrowTasks()
+    suspend fun getNextWeekTasks() = taskLocalSource.getNextWeekTasks()
+    suspend fun getIncomingTasks() = taskLocalSource.getIncomingTasks()
+    suspend fun getFavoriteTasks() = taskLocalSource.getFavoriteTasks()
+    suspend fun getDoneTasks() = taskLocalSource.getDoneTasks()
+    suspend fun getDeletedTasks() = taskLocalSource.getDeletedTasks()
+    suspend fun getAllTasks() = taskLocalSource.getAllTasks()
 }

@@ -46,7 +46,7 @@ class EditTaskViewModel(
 
     fun editTask() {
         action {
-            val task = it.task.apply { list = it.list }
+            val task = it.task.apply { this.list = it.list }
             if (it.id == null) {
                 taskDS.insertTask(task)
             } else {

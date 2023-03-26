@@ -5,9 +5,10 @@ import com.android.todozen.core.presentation.BaseState
 import kotlinx.datetime.LocalDate
 
 data class TaskListState(
+    val isLoading: Boolean = false,
     val list: TaskList? = null,
     val tasks: List<Task> = emptyList(),
-    val points: Long = 0
+    val taskListLevel: TaskListLevel = TaskListLevel(0L)
 ) : BaseState {
 
     val lists: List<EditableList?>

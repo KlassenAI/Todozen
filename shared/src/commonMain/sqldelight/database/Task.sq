@@ -247,7 +247,7 @@ DELETE FROM ActionEntity
 WHERE taskId = ? AND actionType = ?;
 
 getAllPoints:
-SELECT COALESCE(SUM(points), 0) FROM ActionEntity;
+SELECT SUM(points) FROM ActionEntity;
 
 getListPoints:
 SELECT COALESCE(SUM(points), 0) FROM ActionEntity

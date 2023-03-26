@@ -59,39 +59,39 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
         return source.getPriorities().executeAsList().map { it.map() }
     }
 
-    override fun getTasks(listId: Long?): Flow<List<Task>> {
+    override suspend fun getTasks(listId: Long?): Flow<List<Task>> {
         return source.getTasks(listId).asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getMyDayTasks(): Flow<List<Task>> {
+    override suspend fun getMyDayTasks(): Flow<List<Task>> {
         return source.getMyDayTasks(DateTimeUtil.today().toLong()).asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getTomorrowTasks(): Flow<List<Task>> {
+    override suspend fun getTomorrowTasks(): Flow<List<Task>> {
         return source.getTomorrowTasks(DateTimeUtil.tomorrow().toLong()).asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getNextWeekTasks(): Flow<List<Task>> {
+    override suspend fun getNextWeekTasks(): Flow<List<Task>> {
         return source.getNextWeekTasks(DateTimeUtil.tomorrow().toLong(), DateTimeUtil.next(7).toLong()).asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getIncomingTasks(): Flow<List<Task>> {
+    override suspend fun getIncomingTasks(): Flow<List<Task>> {
         return source.getTasks(null).asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getFavoriteTasks(): Flow<List<Task>> {
+    override suspend fun getFavoriteTasks(): Flow<List<Task>> {
         return source.getFavoriteTasks().asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getDoneTasks(): Flow<List<Task>> {
+    override suspend fun getDoneTasks(): Flow<List<Task>> {
         return source.getDoneTasks().asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getDeletedTasks(): Flow<List<Task>> {
+    override suspend fun getDeletedTasks(): Flow<List<Task>> {
         return source.getDeletedTasks().asFlow().mapToList().map { it.map { it.map() } }
     }
 
-    override fun getAllTasks(): Flow<List<Task>> {
+    override suspend fun getAllTasks(): Flow<List<Task>> {
         return source.getAllTasks().asFlow().mapToList().map { it.map { it.map() } }
     }
 }
