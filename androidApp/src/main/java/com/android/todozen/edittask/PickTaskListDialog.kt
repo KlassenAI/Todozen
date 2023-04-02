@@ -12,8 +12,9 @@ import com.android.todozen.core.BaseAdapterDelegate
 import com.android.todozen.core.adapter
 import com.android.todozen.core.initVertical
 import com.android.todozen.core.editableListDelegate
-import com.android.todozen.menu.MenuState
-import com.android.todozen.menu.MenuViewModel
+import com.android.todozen.features.edittask.EditTaskViewModel
+import com.android.todozen.features.menu.MenuState
+import com.android.todozen.features.menu.MenuViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel

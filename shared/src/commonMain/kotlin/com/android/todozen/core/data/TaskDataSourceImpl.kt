@@ -10,23 +10,25 @@ class TaskDataSourceImpl(db: TaskDatabase) : TaskDataSource {
 
     private val source = db.taskQueries
 
-    override suspend fun insertTask(task: Task) {
+    override suspend fun insertTask(task: Task): Long {
         val dateTime = DateTimeUtil.now().toLong()
-        source.insertTask(
-            id = null,
-            repeat = task.repeat.toString(),
-            created = dateTime,
-            updated = dateTime,
-            title = task.title,
-            isDone = task.isDone,
-            date = task.date?.toLong(),
-            time = task.time?.toLong(),
-            listId = task.list?.id,
-            isInMyDay = task.isInMyDay,
-            isDeleted = task.isDeleted,
-            isFavorite = task.isFavorite,
-            priorityId = task.priority.type.id
-        )
+        return source.transactionWithResult {
+            source.insertTask(
+                repeat = task.repeat.toString(),
+                created = dateTime,
+                updated = dateTime,
+                title = task.title,
+                isDone = task.isDone,
+                date = task.date?.toLong(),
+                time = task.time?.toLong(),
+                listId = task.list?.id,
+                isInMyDay = task.isInMyDay,
+                isDeleted = task.isDeleted,
+                isFavorite = task.isFavorite,
+                priorityId = task.priority.type.id
+            )
+            source.getTaskId(dateTime)
+        }.executeAsOne()
     }
 
     override suspend fun updateTask(task: Task) {

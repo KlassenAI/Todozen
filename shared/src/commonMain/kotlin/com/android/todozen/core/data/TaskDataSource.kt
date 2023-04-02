@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TaskDataSource {
 
-    suspend fun insertTask(task: Task)
+    suspend fun insertTask(task: Task): Long
     suspend fun getTask(id: Long): Task
     suspend fun updateTask(task: Task)
     suspend fun deleteTask(id: Long)

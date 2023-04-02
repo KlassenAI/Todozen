@@ -12,6 +12,9 @@
         <action
             android:id="@+id/taskList_to_menu"
             app:destination="@id/menuFragment" />
+        <action
+            android:id="@+id/action_taskListFragment_to_actionLogFragment"
+            app:destination="@id/actionLogFragment" />
     </fragment>
 
     <fragment
@@ -24,5 +27,10 @@
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/actionLogFragment"
+        android:name="com.android.todozen.actionlog.ActionLogFragment"
+        tools:layout="@layout/fragment_action_log" />
 
 </navigation>

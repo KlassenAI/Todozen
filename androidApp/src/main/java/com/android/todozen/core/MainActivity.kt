@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.controller) as NavHostFragment
         navController = navHostFragment.navController
-
-        val color = Color.RED
     }
 
     override fun onSupportNavigateUp(): Boolean {

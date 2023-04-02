@@ -1,7 +1,7 @@
-package com.android.todozen.tasklist
+package com.android.todozen.features.tasklist
 
 import com.android.todozen.core.domain.*
-import com.android.todozen.core.presentation.BaseState
+import com.android.todozen.core.presentation.BaseViewModel.BaseViewModelState
 import kotlinx.datetime.LocalDate
 
 data class TaskListState(
@@ -9,7 +9,7 @@ data class TaskListState(
     val list: TaskList? = null,
     val tasks: List<Task> = emptyList(),
     val taskListLevel: TaskListLevel = TaskListLevel(0L)
-) : BaseState {
+) : BaseViewModelState {
 
     val lists: List<EditableList?>
         get() = tasks.filter { it.isDone.not() }.map { it.list }.distinct().sortedBy { it?.position }

@@ -1,4 +1,4 @@
-package com.android.todozen.tasklist
+package com.android.todozen.features.tasklist
 
 import com.android.todozen.core.domain.*
 import com.android.todozen.core.domain.UseCaseResult.Success
@@ -94,10 +94,19 @@ class TaskListViewModel(
         }
     }
 
+    fun navigateToActionLog() {
+        action {
+            val categoryId = if (it.list is EditableList) it.list.id else 0
+            eventsDispatcher.dispatchEvent { navigateToActionLog(categoryId) }
+        }
+    }
+
     interface EventsListener {
         fun showAddActionDialog(list: TaskList)
         fun showMessageNextRecurringTaskCreated()
         fun showSnackbarActionAdded(action: Action)
         fun showSorts(sorts: List<Sort>)
+
+        fun navigateToActionLog(categoryId: Long?)
     }
 }

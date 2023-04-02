@@ -8,7 +8,9 @@ import com.android.todozen.core.BaseBottomSheetDialogFragment
 import com.android.todozen.core.getColor
 import com.android.todozen.core.setActionDoneListener
 import com.android.todozen.databinding.DialogEditTaskListBinding
-import com.android.todozen.menu.MenuViewModel
+import com.android.todozen.features.edittasklist.EditTaskListState
+import com.android.todozen.features.edittasklist.EditTaskListViewModel
+import com.android.todozen.features.menu.MenuViewModel
 import com.flask.colorpicker.ColorPickerView.WHEEL_TYPE
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -38,7 +40,7 @@ class EditTaskListDialog private constructor() :
         containerColor.setOnClickListener {
             val colorPickerBuilder = ColorPickerDialogBuilder
                 .with(context)
-                .setTitle(getString(R.string.select_color))
+                //.setTitle(getString(R.string.select_color))
                 .wheelType(WHEEL_TYPE.CIRCLE)
                 .density(12)
                 .setPositiveButton("ok") { _, color, _ -> viewModel.updateColor(color) }

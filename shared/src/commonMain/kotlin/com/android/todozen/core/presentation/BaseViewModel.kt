@@ -1,5 +1,6 @@
 package com.android.todozen.core.presentation
 
+import com.android.todozen.core.presentation.BaseViewModel.BaseViewModelState
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
@@ -7,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<S : BaseState>: ViewModel() {
+abstract class BaseViewModel<S : BaseViewModelState>: ViewModel() {
 
     protected val _state = MutableLiveData(initialState())
     val state: LiveData<S> get() = _state
@@ -23,4 +24,6 @@ abstract class BaseViewModel<S : BaseState>: ViewModel() {
     protected fun action(block: suspend CoroutineScope.(state: S) -> Unit): Job {
         return viewModelScope.launch { block(state.value) }
     }
+
+    interface BaseViewModelState
 }

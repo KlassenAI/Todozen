@@ -11,7 +11,9 @@ import com.android.todozen.databinding.FragmentMenuBinding
 import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.edittasklist.EditTaskListDialog
-import com.android.todozen.tasklist.TaskListViewModel
+import com.android.todozen.features.menu.MenuState
+import com.android.todozen.features.menu.MenuViewModel
+import com.android.todozen.features.tasklist.TaskListViewModel
 import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 

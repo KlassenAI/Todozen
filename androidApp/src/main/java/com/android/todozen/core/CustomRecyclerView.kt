@@ -60,7 +60,6 @@ class CustomRecyclerView(
         inflater.inflate(R.layout.layout_recycler, this, true)
         initViews()
         initAttrs(attrs, dfa, dfr)
-//        initListeners()
     }
 
     private fun initViews() {
@@ -83,26 +82,4 @@ class CustomRecyclerView(
         title = getString(R.styleable.CustomRecyclerView_title) ?: ""
         isHide = getBoolean(R.styleable.CustomRecyclerView_isHide, false)
     }
-
-//    private fun initListeners() {
-//        btnPrimary.setOnClickListener(primaryBtnParams?.listener)
-//        btnSecondary.setOnClickListener(secondaryBtnParams?.listener)
-//        btnClose.setOnClickListener { isVisible = false }
-//    }
-//
-//    fun show(
-//        message: String, type: AlertType = INFO, closable: Boolean = false,
-//        primaryBtnParams: AlertButtonParams? = null, secondaryBtnParams: AlertButtonParams? = null,
-//    ) {
-//        this.message = message
-//        this.closable = closable
-//        this.type = type
-//        this.primaryBtnParams = primaryBtnParams
-//        this.secondaryBtnParams = secondaryBtnParams
-//        isVisible = true
-//    }
-//
-//    fun hide() {
-//        isVisible = false
-//    }
 }

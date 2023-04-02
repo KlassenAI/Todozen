@@ -6,8 +6,8 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -21,18 +21,24 @@ import com.android.todozen.core.domain.Task
 import com.android.todozen.core.domain.TaskList
 import com.android.todozen.databinding.FragmentTaskListBinding
 import com.android.todozen.edittask.EditTaskDialog
-import com.android.todozen.edittask.EditTaskViewModel
+import com.android.todozen.features.edittask.EditTaskViewModel
 import com.android.todozen.expect.getName
 import com.android.todozen.expect.getString
+import com.android.todozen.features.actionlog.ActionLogSpec
+import com.android.todozen.features.tasklist.TaskListState
+import com.android.todozen.features.tasklist.TaskListViewModel
+import com.android.todozen.features.tasklist.TaskListViewModel.EventsListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewModel.EventsListener {
+class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, TaskListViewModel>(), EventsListener {
 
-    private val binding by viewBinding<FragmentTaskListBinding>()
-    private val viewModel by sharedViewModel<TaskListViewModel>()
+    override val binding by viewBinding<FragmentTaskListBinding>()
+    override val viewModel by sharedViewModel<TaskListViewModel>()
+    override val layoutId = R.layout.fragment_task_list
+
     private val editTaskViewModel by sharedViewModel<EditTaskViewModel>()
 
     private fun getTaskAdapter() = adapter(taskDelegate(::clickTask, ::checkTask, ::deleteTask))
@@ -54,16 +60,9 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewMode
     private var tasksByListRecyclers: List<CustomRecyclerView> = emptyList()
     private var tasksByPriorityRecyclers: List<CustomRecyclerView> = emptyList()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initViews()
-        initObservers()
-        initListeners()
-    }
+    override fun initViews() = with(binding) {
 
-    private fun initViews() = with(binding) {
-
-        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.tbContainer.toolbar)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(tbContainer.toolbar)
 
         currentTasksByTitleRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
         doneTasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_done))
@@ -86,82 +85,79 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewMode
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun initObservers() {
-
+    override fun initListeners() {
         viewModel.eventsDispatcher.bind(viewLifecycleOwner, this)
-        viewModel.state.bindNotNull(this) {
-
-            binding.indicator.progress = it.taskListLevel.pointsInCurrentLevel.toInt()
-            binding.indicator.max = it.taskListLevel.pointsForNextLevel
-
-            binding.tbContainer.toolbar.title = it.list?.title
-            when (it.list?.sort) {
-                TITLE -> {
-                    currentTasksByTitleRecycler!!.visible(true)
-                    doneTasksRecycler!!.visible(true)
-
-                    outdatedTasksRecycler!!.visible(false)
-                    tasksRecycler!!.visible(false)
-                    tasksByListRecyclers.forEach { it.visible(false) }
-                    tasksByPriorityRecyclers.forEach { it.visible(false) }
-                }
-                DATE -> {
-                    outdatedTasksRecycler!!.visible(true)
-                    tasksRecycler!!.visible(true)
-                    doneTasksRecycler!!.visible(true)
-
-                    currentTasksByTitleRecycler!!.visible(false)
-                    tasksByListRecyclers.forEach { it.visible(false) }
-                    tasksByPriorityRecyclers.forEach { it.visible(false) }
-                }
-                LIST -> {
-                    doneTasksRecycler!!.visible(true)
-
-                    outdatedTasksRecycler!!.visible(false)
-                    tasksRecycler!!.visible(false)
-                    currentTasksByTitleRecycler!!.visible(false)
-                    tasksByPriorityRecyclers.forEach { it.visible(false) }
-
-                    tasksByListRecyclers.forEach { binding.llEditableContainer.removeView(it) }
-                    tasksByListRecyclers = it.lists.map {
-                        binding.llEditableContainer.createRecycler(
-                            it?.title ?: getString(SharedRes.strings.tasks_incoming)
-                        )
-                    }
-                    tasksByListRecyclers.indices.forEach { index ->
-                        tasksByListRecyclers[index].items = it.getTasksByList(it.lists[index]?.id)
-                    }
-                }
-                PRIORITY -> {
-                    doneTasksRecycler!!.visible(true)
-
-                    currentTasksByTitleRecycler!!.visible(false)
-                    outdatedTasksRecycler!!.visible(false)
-                    tasksRecycler!!.visible(false)
-                    tasksByListRecyclers.forEach { it.visible(false) }
-
-                    tasksByPriorityRecyclers.forEach { binding.llEditableContainer.removeView(it) }
-                    tasksByPriorityRecyclers = it.priorities.map {
-                        binding.llEditableContainer.createRecycler(it.type.getName())
-                    }
-                    tasksByPriorityRecyclers.indices.forEach { index ->
-                        tasksByPriorityRecyclers[index].items = it.getTasksByPriority(it.priorities[index])
-                    }
-                }
-                LABEL -> {}
-                else -> {}
-            }
-
-            currentTasksByTitleRecycler!!.items = it.currentTasksByTitle
-            outdatedTasksRecycler!!.items = it.outdatedTasks
-            tasksRecycler!!.items = it.currentTasks
-            doneTasksRecycler!!.items = it.doneTasks
-        }
-    }
-
-    private fun initListeners() {
         binding.fab.setOnClickListener { viewModel.showAddTaskDialog() }
         binding.fab2.setOnClickListener { findNavController().navigate(R.id.taskList_to_menu) }
+        binding.fab3.setOnClickListener { viewModel.navigateToActionLog() }
+    }
+
+    override fun render(state: TaskListState) = with(binding) {
+        binding.indicator.progress = state.taskListLevel.pointsInCurrentLevel.toInt()
+        binding.indicator.max = state.taskListLevel.pointsForNextLevel
+
+        binding.tbContainer.toolbar.title = state.list?.title
+        when (state.list?.sort) {
+            TITLE -> {
+                currentTasksByTitleRecycler!!.visible(true)
+                doneTasksRecycler!!.visible(true)
+
+                outdatedTasksRecycler!!.visible(false)
+                tasksRecycler!!.visible(false)
+                tasksByListRecyclers.forEach { it.visible(false) }
+                tasksByPriorityRecyclers.forEach { it.visible(false) }
+            }
+            DATE -> {
+                outdatedTasksRecycler!!.visible(true)
+                tasksRecycler!!.visible(true)
+                doneTasksRecycler!!.visible(true)
+
+                currentTasksByTitleRecycler!!.visible(false)
+                tasksByListRecyclers.forEach { it.visible(false) }
+                tasksByPriorityRecyclers.forEach { it.visible(false) }
+            }
+            LIST -> {
+                doneTasksRecycler!!.visible(true)
+
+                outdatedTasksRecycler!!.visible(false)
+                tasksRecycler!!.visible(false)
+                currentTasksByTitleRecycler!!.visible(false)
+                tasksByPriorityRecyclers.forEach { it.visible(false) }
+
+                tasksByListRecyclers.forEach { binding.llEditableContainer.removeView(it) }
+                tasksByListRecyclers = state.lists.map {
+                    binding.llEditableContainer.createRecycler(
+                        it?.title ?: getString(SharedRes.strings.tasks_incoming)
+                    )
+                }
+                tasksByListRecyclers.indices.forEach { index ->
+                    tasksByListRecyclers[index].items = state.getTasksByList(state.lists[index]?.id)
+                }
+            }
+            PRIORITY -> {
+                doneTasksRecycler!!.visible(true)
+
+                currentTasksByTitleRecycler!!.visible(false)
+                outdatedTasksRecycler!!.visible(false)
+                tasksRecycler!!.visible(false)
+                tasksByListRecyclers.forEach { it.visible(false) }
+
+                tasksByPriorityRecyclers.forEach { binding.llEditableContainer.removeView(it) }
+                tasksByPriorityRecyclers = state.priorities.map {
+                    binding.llEditableContainer.createRecycler(it.type.getName())
+                }
+                tasksByPriorityRecyclers.indices.forEach { index ->
+                    tasksByPriorityRecyclers[index].items = state.getTasksByPriority(state.priorities[index])
+                }
+            }
+            LABEL -> {}
+            else -> {}
+        }
+
+        currentTasksByTitleRecycler!!.items = state.currentTasksByTitle
+        outdatedTasksRecycler!!.items = state.outdatedTasks
+        tasksRecycler!!.items = state.currentTasks
+        doneTasksRecycler!!.items = state.doneTasks
     }
 
     private fun ViewGroup.createRecycler(title: String): CustomRecyclerView {
@@ -174,7 +170,6 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewMode
     }
 
     override fun showAddActionDialog(list: TaskList) {
-        val directions =
         editTaskViewModel.updateList(list)
         showDialog(EditTaskDialog.getInstance())
     }
@@ -182,6 +177,7 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewMode
     override fun showMessageNextRecurringTaskCreated() {
         Toast.makeText(requireContext(), "Следующая повторяющася задача создана", Toast.LENGTH_SHORT).show()
     }
+
     override fun showSnackbarActionAdded(action: Action) {
         Log.d("bebra", action.toString())
     }
@@ -198,5 +194,10 @@ class TaskListFragment : Fragment(R.layout.fragment_task_list), TaskListViewMode
             powerMenu.dismiss()
         }
         powerMenu.showAsAnchorRightBottom(binding.tbContainer.toolbar)
+    }
+
+    override fun navigateToActionLog(categoryId: Long?) {
+        val bundle = bundleOf("spec" to ActionLogSpec(categoryId))
+        findNavController().navigate(R.id.actionLogFragment, bundle)
     }
 }

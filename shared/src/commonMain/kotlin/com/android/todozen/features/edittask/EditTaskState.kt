@@ -1,8 +1,8 @@
-package com.android.todozen.edittask
+package com.android.todozen.features.edittask
 
 import com.android.todozen.core.domain.*
 import com.android.todozen.core.domain.InternalListType.*
-import com.android.todozen.core.presentation.BaseState
+import com.android.todozen.core.presentation.BaseViewModel.BaseViewModelState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -12,7 +12,7 @@ data class EditTaskState(
     val taskList: TaskList? = null,
     val isListPicked: Boolean = false,
     val isDatePicked: Boolean = false,
-) : BaseState {
+) : BaseViewModelState {
 
     val isUpdating: Boolean get() = id != null
 

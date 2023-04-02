@@ -3,6 +3,7 @@ plugins {
     id("com.android.library")
     id("com.squareup.sqldelight")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("kotlin-parcelize")
 }
 
 dependencies {
@@ -55,6 +56,8 @@ kotlin {
 
                 implementation(kotlin("stdlib-common"))
 
+                implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+
                 // Storage
                 implementation("com.squareup.sqldelight:runtime:$sqldelight")
                 implementation("com.squareup.sqldelight:coroutines-extensions:$sqlCoroutines")
@@ -78,6 +81,9 @@ kotlin {
                 implementation("dev.icerock.moko:mvvm-state:$moko") // api mvvm-livedata, ResourceState class and extensions
                 implementation("dev.icerock.moko:mvvm-livedata-resources:$moko") // api mvvm-core, moko-resources, extensions for LiveData with moko-resources
                 implementation("dev.icerock.moko:mvvm-flow-resources:$moko") // api mvvm-core, moko-resources, extensions for Flow with moko-resources
+
+                // Settings
+                implementation("com.russhwolf:multiplatform-settings-no-arg:1.0.0")
             }
         }
         val commonTest by getting {

@@ -114,7 +114,7 @@ CREATE TABLE TaskEntity(
 
 insertTask:
 INSERT INTO TaskEntity
-VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);
+VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?);
 
 updateTask:
 REPLACE INTO TaskEntity
@@ -266,3 +266,23 @@ LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
 LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE taskId = ?;
+
+CREATE TABLE TaskLogEntity(
+    taskLogId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    taskLogType TEXT NOT NULL,
+    date INTEGER NOT NULL,
+    taskId INTEGER NOT NULL,
+    taskTitle TEXT NOT NULL,
+    taskCategoryId INTEGER
+);
+
+makeTaskLog:
+INSERT INTO TaskLogEntity
+VALUES (NULL,?,?,?,?,?);
+
+getTaskLogsByCategory:
+SELECT taskLogId, taskLogType, date, taskId, taskTitle, taskCategoryId FROM TaskLogEntity
+WHERE taskCategoryId = ?;
+
+getAllTaskLogs:
+SELECT taskLogId, taskLogType, date, taskId, taskTitle, taskCategoryId FROM TaskLogEntity;

@@ -1,4 +1,4 @@
-package com.android.todozen.menu
+package com.android.todozen.features.menu
 
 import com.android.todozen.core.data.ListDataSource
 import com.android.todozen.core.domain.EditableList

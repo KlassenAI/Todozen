@@ -20,6 +20,9 @@ import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
 import com.android.todozen.expect.getName
 import com.android.todozen.expect.getString
+import com.android.todozen.features.edittask.EditTaskListener
+import com.android.todozen.features.edittask.EditTaskState
+import com.android.todozen.features.edittask.EditTaskViewModel
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import kotlinx.datetime.LocalDateTime
@@ -48,9 +51,7 @@ class EditTaskDialog private constructor() :
             Log.d("bebra", state.task.toString())
             // viewModel.editTask()
         }
-        btnEdit.setOnClickListener {
-
-            viewModel.editTask(); dismiss() }
+        btnEdit.setOnClickListener { viewModel.editTask(); dismiss() }
         containerDate.setOnClickListener {
             showDialog(EditDateDialog.getInstance(state.task.date, state.task.time))
         }
