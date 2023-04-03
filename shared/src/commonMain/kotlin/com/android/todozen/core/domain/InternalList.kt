@@ -1,6 +1,6 @@
 package com.android.todozen.core.domain
 
-import com.android.todozen.expect.getName
+import com.android.todozen.core.expect.getName
 
 data class InternalList(
     val type: InternalListType,

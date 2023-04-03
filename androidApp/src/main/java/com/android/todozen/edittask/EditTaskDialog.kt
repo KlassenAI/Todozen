@@ -18,8 +18,8 @@ import com.android.todozen.core.setActionDoneListener
 import com.android.todozen.core.showDialog
 import com.android.todozen.databinding.DialogEditTaskBinding
 import com.android.todozen.editdate.EditDateDialog
-import com.android.todozen.expect.getName
-import com.android.todozen.expect.getString
+import com.android.todozen.core.expect.getName
+import com.android.todozen.core.expect.getString
 import com.android.todozen.features.edittask.EditTaskListener
 import com.android.todozen.features.edittask.EditTaskState
 import com.android.todozen.features.edittask.EditTaskViewModel

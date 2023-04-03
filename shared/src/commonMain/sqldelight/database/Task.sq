@@ -230,47 +230,11 @@ LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
 LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
 WHERE isDeleted = FALSE;
 
-CREATE TABLE ActionEntity(
-    id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    points INTEGER NOT NULL,
-    actionType TEXT NOT NULL,
-    taskId INTEGER,
-    FOREIGN KEY (taskId) REFERENCES TaskEntity(id)
-);
-
-addAction:
-INSERT INTO ActionEntity
-VALUES (?,?,?,?);
-
-deleteAction:
-DELETE FROM ActionEntity
-WHERE taskId = ? AND actionType = ?;
-
-getAllPoints:
-SELECT SUM(points) FROM ActionEntity;
-
-getListPoints:
-SELECT COALESCE(SUM(points), 0) FROM ActionEntity
-LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
-WHERE listId = ?;
-
-getAllActions:
-SELECT * FROM ActionEntity
-LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
-LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
-LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id;
-
-getTaskActions:
-SELECT * FROM ActionEntity
-LEFT OUTER JOIN TaskEntity ON ActionEntity.taskId == TaskEntity.id
-LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
-LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
-WHERE taskId = ?;
 
 CREATE TABLE TaskLogEntity(
     taskLogId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     taskLogType TEXT NOT NULL,
-    date INTEGER NOT NULL,
+    dateTime INTEGER NOT NULL,
     taskId INTEGER NOT NULL,
     taskTitle TEXT NOT NULL,
     taskCategoryId INTEGER
@@ -281,8 +245,64 @@ INSERT INTO TaskLogEntity
 VALUES (NULL,?,?,?,?,?);
 
 getTaskLogsByCategory:
-SELECT taskLogId, taskLogType, date, taskId, taskTitle, taskCategoryId FROM TaskLogEntity
-WHERE taskCategoryId = ?;
+SELECT taskLogId, taskLogType, dateTime, taskId, taskTitle, taskCategoryId FROM TaskLogEntity
+WHERE taskCategoryId = ?
+ORDER BY dateTime DESC;
 
 getAllTaskLogs:
-SELECT taskLogId, taskLogType, date, taskId, taskTitle, taskCategoryId FROM TaskLogEntity;
+SELECT taskLogId, taskLogType, dateTime, taskId, taskTitle, taskCategoryId FROM TaskLogEntity
+ORDER BY dateTime DESC;
+
+
+CREATE TABLE TaskActionEntity(
+    taskActionId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    taskActionType TEXT NOT NULL,
+    taskId INTEGER NOT NULL,
+    taskTitle TEXT NOT NULL,
+    points INTEGER NOT NULL
+);
+
+addTaskAction:
+INSERT INTO TaskActionEntity
+VALUES (NULL,?,?,?,?);
+
+deleteTaskAction:
+DELETE FROM TaskActionEntity
+WHERE taskId = ? AND taskActionType = ?;
+
+getAllPoints:
+SELECT SUM(points) FROM TaskActionEntity;
+
+getListPoints:
+SELECT COALESCE(SUM(points), 0) FROM TaskActionEntity
+LEFT OUTER JOIN TaskEntity ON TaskActionEntity.taskId == TaskEntity.id
+WHERE listId = ?;
+
+getAllActions:
+SELECT * FROM TaskActionEntity
+LEFT OUTER JOIN TaskEntity ON TaskActionEntity.taskId == TaskEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id;
+
+getTaskActions:
+SELECT * FROM TaskActionEntity
+LEFT OUTER JOIN TaskEntity ON TaskActionEntity.taskId == TaskEntity.id
+LEFT OUTER JOIN EditableListEntity ON TaskEntity.listId == EditableListEntity.id
+LEFT OUTER JOIN PriorityEntity ON TaskEntity.priorityId == PriorityEntity.id
+WHERE taskId = ?;
+
+
+CREATE TABLE DayChallengeEntity(
+    dayChallengeId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    day INTEGER NOT NULL,
+    points INTEGER NOT NULL,
+    created INTEGER NOT NULL
+);
+
+saveCompleteDayChallenge:
+INSERT INTO DayChallengeEntity
+VALUES (NULL,?,?,?);
+
+getDayChallenges:
+SELECT * FROM DayChallengeEntity
+ORDER BY day DESC;

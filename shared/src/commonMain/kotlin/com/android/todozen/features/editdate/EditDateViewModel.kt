@@ -1,13 +1,13 @@
 package com.android.todozen.features.editdate
 
-import com.android.todozen.core.data.TaskDataSource
+import com.android.todozen.task.TaskLocalSource
 import com.android.todozen.core.domain.RepeatType
 import com.android.todozen.core.presentation.BaseViewModel
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class EditDateViewModel(
-    private val taskDS: TaskDataSource
+    private val taskDS: TaskLocalSource
 ) : BaseViewModel<EditDateState>() {
 
     override fun initialState() = EditDateState()

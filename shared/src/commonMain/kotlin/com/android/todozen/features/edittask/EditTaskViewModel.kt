@@ -1,17 +1,17 @@
 package com.android.todozen.features.edittask
 
-import com.android.todozen.core.data.TaskDataSource
+import com.android.todozen.task.TaskLocalSource
 import com.android.todozen.core.domain.*
 import com.android.todozen.core.presentation.BaseViewModel
-import com.android.todozen.features.actionlog.ActionLogRepository
-import com.android.todozen.features.actionlog.LogsInteractor
+import com.android.todozen.log.LogInteractor
+import com.android.todozen.task.Task
 import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 class EditTaskViewModel(
-    private val taskDS: TaskDataSource,
-    private val logsInteractor: LogsInteractor,
+    private val taskDS: TaskLocalSource,
+    private val logInteractor: LogInteractor,
     val eventsDispatcher: EventsDispatcher<EditTaskListener>
 ) : BaseViewModel<EditTaskState>() {
 
@@ -53,9 +53,10 @@ class EditTaskViewModel(
             if (it.id == null) {
                 val taskId = taskDS.insertTask(task)
                 task.id = taskId
-                logsInteractor.logTaskCreating(task)
+                logInteractor.logTaskCreating(task)
             } else {
                 taskDS.updateTask(task)
+                logInteractor.logTaskUpdating(task)
             }
         }
         clearState()

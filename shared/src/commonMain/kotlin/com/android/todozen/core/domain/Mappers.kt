@@ -1,8 +1,13 @@
 package com.android.todozen.core.domain
 
+import com.android.todozen.SharedRes
+import com.android.todozen.action.TaskActionType
+import com.android.todozen.core.expect.getString
+import com.android.todozen.task.Task
 import database.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.*
+import kotlinx.datetime.DayOfWeek.*
+import kotlinx.datetime.Month.*
 
 fun GetTask.map() = Task(
     id = id,
@@ -172,7 +177,7 @@ fun PriorityEntity.map() = Priority(
 fun GetAllActions.map() = Action(
     id = id,
     points = points,
-    type = ActionType.valueOf(actionType),
+    type = TaskActionType.valueOf(actionType),
     task = Task(
         id = id_!!,
         title = title.orEmpty(),
@@ -193,7 +198,7 @@ fun GetAllActions.map() = Action(
 fun GetTaskActions.map() = Action(
     id = id,
     points = points,
-    type = ActionType.valueOf(actionType),
+    type = TaskActionType.valueOf(actionType),
     task = Task(
         id = id_!!,
         title = title.orEmpty(),
@@ -234,3 +239,46 @@ fun LocalTime.toLong(): Long = toNanosecondOfDay()
 fun Long.toLocalTime(): LocalTime = LocalTime.fromNanosecondOfDay(this)
 
 inline fun Boolean?.orDefault(): Boolean = this ?: false
+
+fun LocalTime.getString(): String {
+    return "${hour.getTimeStr()}:${minute.getTimeStr()}:${second.getTimeStr()}";
+}
+
+private fun Int.getTimeStr() = toString().padStart(2, '0')
+
+fun Month.getString(): String = when(this) {
+    JANUARY -> getString(SharedRes.strings.month_short_january)
+    FEBRUARY -> getString(SharedRes.strings.month_short_february)
+    MARCH -> getString(SharedRes.strings.month_short_march)
+    APRIL -> getString(SharedRes.strings.month_short_april)
+    MAY -> getString(SharedRes.strings.month_short_may)
+    JUNE -> getString(SharedRes.strings.month_short_january)
+    JULY -> getString(SharedRes.strings.month_short_january)
+    AUGUST -> getString(SharedRes.strings.month_short_january)
+    SEPTEMBER -> getString(SharedRes.strings.month_short_january)
+    OCTOBER -> getString(SharedRes.strings.month_short_january)
+    NOVEMBER -> getString(SharedRes.strings.month_short_january)
+    DECEMBER -> getString(SharedRes.strings.month_short_january)
+    else -> getString(SharedRes.strings.month_short_january)
+}
+
+fun DayOfWeek.getString(): String = when(this) {
+    MONDAY -> getString(SharedRes.strings.weekday_monday)
+    TUESDAY -> getString(SharedRes.strings.weekday_tuesday)
+    WEDNESDAY -> getString(SharedRes.strings.weekday_wednesday)
+    THURSDAY -> getString(SharedRes.strings.weekday_thursday)
+    FRIDAY -> getString(SharedRes.strings.weekday_friday)
+    SATURDAY -> getString(SharedRes.strings.weekday_saturday)
+    SUNDAY -> getString(SharedRes.strings.weekday_sunday)
+    else -> getString(SharedRes.strings.weekday_monday)
+}
+
+// The day of the week comes from the days of the era.
+// Week Zero is the week of January 1, 1970.
+fun LocalDate.getWeekNumberAndDaysRemaining(): Pair<Int, Int> {
+    return Pair((toEpochDays() + 3) / 7, (toEpochDays() + 3) % 7)
+}
+
+fun getLocalDateFromWeekNumberAndDaysRemaining(weekNumber: Int, daysRemaining: Int): LocalDate {
+    return LocalDate.fromEpochDays(weekNumber * 7 + daysRemaining - 3)
+}

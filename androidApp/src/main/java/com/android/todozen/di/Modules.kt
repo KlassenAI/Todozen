@@ -1,6 +1,5 @@
 package com.android.todozen.di
 
-import com.android.todozen.features.actionlog.ActionLogSpecViewModel
 import com.android.todozen.features.actionlog.ActionLogViewModel
 import com.android.todozen.features.editdate.EditDateViewModel
 import com.android.todozen.features.edittask.EditTaskListener
@@ -13,12 +12,11 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    // Specs
     single { EditTaskViewModel(get(), get(), EventsDispatcher<EditTaskListener>()) }
+
     single { EventsDispatcher<TaskListViewModel.EventsListener>() }
-    single {
-        TaskListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
-    }
+    single { TaskListViewModel(get(), get(), get()) }
+
     single { EditDateViewModel(get()) }
     single { MenuViewModel(get()) }
     single { EditTaskListViewModel(get()) }

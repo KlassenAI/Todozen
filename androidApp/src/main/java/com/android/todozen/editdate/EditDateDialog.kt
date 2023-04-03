@@ -17,7 +17,7 @@ import com.android.todozen.databinding.DialogEditDateBinding
 import com.android.todozen.databinding.LayoutDayBinding
 import com.android.todozen.core.domain.DateTimeUtil.formatTime
 import com.android.todozen.features.edittask.EditTaskViewModel
-import com.android.todozen.expect.getString
+import com.android.todozen.core.expect.getString
 import com.android.todozen.features.editdate.EditDateState
 import com.android.todozen.features.editdate.EditDateViewModel
 import com.kizitonwose.calendar.core.CalendarDay

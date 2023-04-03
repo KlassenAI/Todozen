@@ -46,4 +46,27 @@
     <string name="date_day_next_sunday">Следующее вс</string>
     <string name="date_days_next">%s д. осталось</string>
 
+    // Месяцы
+    <string name="month_short_january">янв.</string>
+    <string name="month_short_february">фев.</string>
+    <string name="month_short_march">мар.</string>
+    <string name="month_short_april">апр.</string>
+    <string name="month_short_may">мая</string>
+    <string name="month_short_june">июн.</string>
+    <string name="month_short_july">июл.</string>
+    <string name="month_short_august">авг.</string>
+    <string name="month_short_september">сен.</string>
+    <string name="month_short_october">окт.</string>
+    <string name="month_short_november">нояб.</string>
+    <string name="month_short_december">дек.</string>
+
+    // Дни недели
+    <string name="weekday_monday">Понедельник</string>
+    <string name="weekday_tuesday">Вторник</string>
+    <string name="weekday_wednesday">Среда</string>
+    <string name="weekday_thursday">Четверг</string>
+    <string name="weekday_friday">Пятница</string>
+    <string name="weekday_saturday">Суббота</string>
+    <string name="weekday_sunday">Воскресенье</string>
+
 </resources>

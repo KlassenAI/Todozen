@@ -3,6 +3,7 @@ package com.android.todozen.features.edittask
 import com.android.todozen.core.domain.*
 import com.android.todozen.core.domain.InternalListType.*
 import com.android.todozen.core.presentation.BaseViewModel.BaseViewModelState
+import com.android.todozen.task.Task
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 

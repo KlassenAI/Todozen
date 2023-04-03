@@ -1,6 +1,8 @@
 package com.android.todozen.core.domain
 
+import com.android.todozen.action.TaskActionType
 import com.android.todozen.core.domain.PriorityType.*
+import com.android.todozen.task.Task
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 
@@ -22,7 +24,7 @@ object TaskUtil {
         return Action(
             null,
             points = points,
-            type = ActionType.DONE,
+            type = TaskActionType.DONE_TASK,
             task = task
         )
     }

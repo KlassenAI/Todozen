@@ -1,7 +1,7 @@
 package com.android.todozen.core.domain
 
 import com.android.todozen.SharedRes
-import com.android.todozen.expect.getString
+import com.android.todozen.core.expect.getString
 import kotlinx.datetime.*
 import kotlinx.datetime.DayOfWeek.*
 

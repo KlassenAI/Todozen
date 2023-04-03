@@ -46,4 +46,27 @@
     <string name="date_day_next_sunday">Next su</string>
     <string name="date_days_next">%s d. left</string>
 
+    // Months
+    <string name="month_short_january">Jan.</string>
+    <string name="month_short_february">Feb.</string>
+    <string name="month_short_march">Mar.</string>
+    <string name="month_short_april">Apr.</string>
+    <string name="month_short_may">May</string>
+    <string name="month_short_june">Jun.</string>
+    <string name="month_short_july">Jul.</string>
+    <string name="month_short_august">Aug.</string>
+    <string name="month_short_september">Sep.</string>
+    <string name="month_short_october">Oct.</string>
+    <string name="month_short_november">Nov.</string>
+    <string name="month_short_december">Dec.</string>
+
+    // Days Of Week
+    <string name="weekday_monday">Monday</string>
+    <string name="weekday_tuesday">Tuesday</string>
+    <string name="weekday_wednesday">Wednesday</string>
+    <string name="weekday_thursday">Thursday</string>
+    <string name="weekday_friday">Friday</string>
+    <string name="weekday_saturday">Saturday</string>
+    <string name="weekday_sunday">Sunday</string>
+
 </resources>

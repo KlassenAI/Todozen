@@ -6,7 +6,7 @@ import com.android.todozen.databinding.ItemTaskBinding
 import com.android.todozen.databinding.ItemTaskList2Binding
 import com.android.todozen.databinding.ItemTaskListBinding
 import com.android.todozen.core.domain.DateTimeUtil.formatDateTime
-import com.android.todozen.core.domain.Task
+import com.android.todozen.task.Task
 import com.android.todozen.core.domain.EditableList
 import com.android.todozen.core.domain.InternalList
 import com.android.todozen.core.domain.ListItem

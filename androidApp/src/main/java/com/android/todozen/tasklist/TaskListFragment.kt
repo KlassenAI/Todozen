@@ -1,9 +1,11 @@
 package com.android.todozen.tasklist
 
 import android.graphics.Color
-import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -17,23 +19,23 @@ import com.android.todozen.core.*
 import com.android.todozen.core.domain.Action
 import com.android.todozen.core.domain.Sort
 import com.android.todozen.core.domain.Sort.*
-import com.android.todozen.core.domain.Task
+import com.android.todozen.task.Task
 import com.android.todozen.core.domain.TaskList
+import com.android.todozen.core.expect.getName
+import com.android.todozen.core.expect.getString
 import com.android.todozen.databinding.FragmentTaskListBinding
 import com.android.todozen.edittask.EditTaskDialog
-import com.android.todozen.features.edittask.EditTaskViewModel
-import com.android.todozen.expect.getName
-import com.android.todozen.expect.getString
 import com.android.todozen.features.actionlog.ActionLogSpec
-import com.android.todozen.features.tasklist.TaskListState
+import com.android.todozen.features.edittask.EditTaskViewModel
 import com.android.todozen.features.tasklist.TaskListViewModel
 import com.android.todozen.features.tasklist.TaskListViewModel.EventsListener
+import com.android.todozen.features.tasklist.TaskListViewModel.TaskListState
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
-import dev.icerock.moko.mvvm.utils.bindNotNull
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, TaskListViewModel>(), EventsListener {
+class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, TaskListViewModel>(),
+    EventsListener {
 
     override val binding by viewBinding<FragmentTaskListBinding>()
     override val viewModel by sharedViewModel<TaskListViewModel>()
@@ -64,11 +66,15 @@ class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, Ta
 
         (requireActivity() as AppCompatActivity).setSupportActionBar(tbContainer.toolbar)
 
-        currentTasksByTitleRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
-        doneTasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_done))
+        currentTasksByTitleRecycler =
+            llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
+        doneTasksRecycler =
+            llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_done))
 
-        outdatedTasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_overdue))
-        tasksRecycler = llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
+        outdatedTasksRecycler =
+            llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_overdue))
+        tasksRecycler =
+            llInternalContainer.createRecycler(getString(SharedRes.strings.tasks_current))
 
         requireActivity().addMenuProvider(object : MenuProvider {
 
@@ -147,7 +153,8 @@ class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, Ta
                     binding.llEditableContainer.createRecycler(it.type.getName())
                 }
                 tasksByPriorityRecyclers.indices.forEach { index ->
-                    tasksByPriorityRecyclers[index].items = state.getTasksByPriority(state.priorities[index])
+                    tasksByPriorityRecyclers[index].items =
+                        state.getTasksByPriority(state.priorities[index])
                 }
             }
             LABEL -> {}
@@ -175,7 +182,11 @@ class TaskListFragment : BaseFragment<FragmentTaskListBinding, TaskListState, Ta
     }
 
     override fun showMessageNextRecurringTaskCreated() {
-        Toast.makeText(requireContext(), "Следующая повторяющася задача создана", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Следующая повторяющася задача создана",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun showSnackbarActionAdded(action: Action) {
